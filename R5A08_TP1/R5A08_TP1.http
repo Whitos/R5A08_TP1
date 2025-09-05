@@ -1,0 +1,6 @@
+@R5A08_TP1_HostAddress = http://localhost:5088
+
+GET {{R5A08_TP1_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
