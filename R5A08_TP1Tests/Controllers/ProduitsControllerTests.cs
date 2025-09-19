@@ -90,7 +90,7 @@ namespace R5A08_TP1.Controllers.Tests
         }
 
         [TestMethod()]
-        public void ProductShouldReturnNotFound()
+        public void GetProductShouldReturnNotFound()
         {
             // When : J'appelle la méthode get de mon api pour récupérer le produit
             ActionResult<Produit> action = _produitController.Get(0).GetAwaiter().GetResult();
@@ -145,6 +145,87 @@ namespace R5A08_TP1.Controllers.Tests
             Assert.IsNotNull(action);
             Assert.IsInstanceOfType(action, typeof(NoContentResult));
             Assert.IsNull(_context.Produits.Find(produitInDb.IdProduit));
+        }
+
+        [TestMethod]
+        public void ShouldUpdateProduct()
+        {
+            // Given : Un produit à mettre à jour
+            Produit produitToEdit = new()
+            {
+              
+                NomProduit = "Bureau",
+                Description = "Un super bureau",
+                NomPhoto = "Un super bureau bleu",
+                UriPhoto = "https://ikea.fr/bureau.jpg"
+            };
+
+            _context.Produits.Add(produitToEdit);
+            _context.SaveChanges();
+
+            // Une fois enregistré, on modifie certaines propriétés 
+            produitToEdit.NomProduit = "Lit";
+            produitToEdit.Description = "Un super lit";
+
+            // When : On appelle la méthode PUT du controller pour mettre à jour le produit
+            IActionResult action = _produitController.Update(produitToEdit.IdProduit, produitToEdit).GetAwaiter().GetResult();
+
+            // Then : On vérifie que le produit a bien été modifié et que le code renvoyé et NO_CONTENT (204)
+            Assert.IsNotNull(action);
+            Assert.IsInstanceOfType(action, typeof(NoContentResult));
+
+            Produit editedProductInDb = _context.Produits.Find(produitToEdit.IdProduit);
+
+            Assert.IsNotNull(editedProductInDb);
+            Assert.AreEqual(produitToEdit, editedProductInDb);
+        }
+
+        [TestMethod]
+        public void ShouldNotUpdateProductBecauseIdInUrlIsDifferent()
+        {
+            // Given : Un produit à mettre à jour
+            Produit produitToEdit = new()
+            {
+                NomProduit = "Bureau",
+                Description = "Un super bureau",
+                NomPhoto = "Un super bureau bleu",
+                UriPhoto = "https://ikea.fr/bureau.jpg"
+            };
+
+            _context.Produits.Add(produitToEdit);
+            _context.SaveChanges();
+
+            produitToEdit.NomProduit = "Lit";
+            produitToEdit.Description = "Un super lit";
+
+            // When : On appelle la méthode PUT du controller pour mettre à jour le produit,
+            // mais en précisant un ID différent de celui du produit enregistré
+            IActionResult action = _produitController.Update(0, produitToEdit).GetAwaiter().GetResult();
+
+            // Then : On vérifie que l'API renvoie un code BAD_REQUEST (400)
+            Assert.IsNotNull(action);
+            Assert.IsInstanceOfType(action, typeof(BadRequestResult));
+        }
+
+        [TestMethod]
+        public void ShouldNotUpdateProductBecauseProductDoesNotExist()
+        {
+            // Given : Un produit à mettre à jour qui n'est pas enregistré
+            Produit produitToEdit = new()
+            {
+                IdProduit = 20,
+                NomProduit = "Bureau",
+                Description = "Un super bureau",
+                NomPhoto = "Un super bureau bleu",
+                UriPhoto = "https://ikea.fr/bureau.jpg"
+            };
+
+            // When : On appelle la méthode PUT du controller pour mettre à jour un produit qui n'est pas enregistré
+            IActionResult action = _produitController.Update(produitToEdit.IdProduit, produitToEdit).GetAwaiter().GetResult();
+
+            // Then : On vérifie que l'API renvoie un code NOT_FOUND (404)
+            Assert.IsNotNull(action);
+            Assert.IsInstanceOfType(action, typeof(NotFoundResult));
         }
 
         [TestMethod]

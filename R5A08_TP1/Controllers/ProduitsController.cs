@@ -65,5 +65,27 @@ namespace R5A08_TP1.Controllers
             await dataRepository.DeleteAsync(produitToDelete.Value);
             return NoContent();
         }
+
+        [HttpPut("{id}")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> Update(int id, [FromBody] Produit produit)
+        {
+            if (id != produit.IdProduit)
+            {
+                return BadRequest();
+            }
+
+            ActionResult<Produit?> prodToUpdate = await dataRepository.GetByIdAsync(id);
+
+            if (prodToUpdate.Value == null)
+            {
+                return NotFound();
+            }
+
+            await dataRepository.UpdateAsync(prodToUpdate.Value, produit);
+            return NoContent();
+        }
     }
 }

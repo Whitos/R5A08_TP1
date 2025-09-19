@@ -37,7 +37,10 @@ namespace R5A08_TP1.Models.DataManager
 
         public async Task UpdateAsync(Produit entityToUpdate, Produit entity)
         {
-            throw new NotImplementedException();
+            dbContext.Produits.Attach(entityToUpdate);
+            dbContext.Entry(entityToUpdate).CurrentValues.SetValues(entity);
+
+            await dbContext.SaveChangesAsync();
         }
 
         public async Task DeleteAsync(Produit entity)

@@ -1,0 +1,48 @@
+﻿@page "/weather"
+@inject IService<Produit> Service
+ 
+<PageTitle>Produits</PageTitle>
+
+<h1>Liste des produits</h1>
+
+@if (produits == null)
+{
+    <p><em>Chargement...</em></p>
+}
+else if (!produits.Any())
+{
+    <p><em>Aucun produit trouvé.</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Nom</th>
+                <th>Description</th>
+                <th>Photo</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var produit in produits)
+            {
+                <tr>
+                    <td>@produit.NomProduit</td>
+                    <td>@produit.Description</td>
+                    <td>
+                        <img src="@produit.UriPhoto" alt="@produit.NomProduit" width="100" />
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Produit>? produits;
+
+    protected override async Task OnInitializedAsync()
+    {
+        produits = await Service.GetAllAsync();
+    }
+}

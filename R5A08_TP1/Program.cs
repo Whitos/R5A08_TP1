@@ -12,6 +12,14 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ProduitsDbContext>();
 builder.Services.AddScoped<IDataRepository<Produit>, ProduitManager>();  // manager tjrs addscoped jamais addsingleton
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowBlazor",
+        policy => policy
+            .WithOrigins("https://localhost:7011", "http://localhost:5011") // URL de ton Blazor
+            .AllowAnyHeader()
+            .AllowAnyMethod());
+});
 
 var app = builder.Build();
 
@@ -25,6 +33,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+app.UseCors("AllowBlazor");
 
 app.MapControllers();
 
