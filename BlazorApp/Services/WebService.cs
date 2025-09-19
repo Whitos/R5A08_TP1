@@ -7,7 +7,7 @@ namespace BlazorApp.Services
     {
         private readonly HttpClient httpClient = new()
         {
-            BaseAddress = new Uri("http://localhost:5011/api/")
+            BaseAddress = new Uri("https://localhost:7234/api/")
         };
 
         public async Task AddAsync(Produit produit)
