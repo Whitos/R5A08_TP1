@@ -11,15 +11,15 @@ using R5A08_TP1.Models.EntityFramework;
 namespace R5A08_TP1.Migrations
 {
     [DbContext(typeof(ProduitsDbContext))]
-    [Migration("20250905130948_produitsmig")]
-    partial class produitsmig
+    [Migration("20250912124230_pdbmigra2")]
+    partial class pdbmigra2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.8")
+                .HasAnnotation("ProductVersion", "8.0.11")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -132,7 +132,7 @@ namespace R5A08_TP1.Migrations
                         .WithMany("ProduitsAssoc")
                         .HasForeignKey("IdTypeProduit")
                         .IsRequired()
-                        .HasConstraintName("FK_produits_type_produits");
+                        .HasConstraintName("FK_type_produit_produits");
 
                     b.Navigation("MarqueAssoc");
 

@@ -6,7 +6,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace R5A08_TP1.Migrations
 {
     /// <inheritdoc />
-    public partial class produitsmig : Migration
+    public partial class pdbmigra : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -62,7 +62,7 @@ namespace R5A08_TP1.Migrations
                         principalTable: "Marque",
                         principalColumn: "id_marque");
                     table.ForeignKey(
-                        name: "FK_produits_type_produits",
+                        name: "FK_type_produit_produits",
                         column: x => x.id_type_produit,
                         principalTable: "TypeProduit",
                         principalColumn: "id_type_produit");

@@ -20,13 +20,13 @@ namespace R5A08_TP1.Models.EntityFramework
         public string NomPhoto { get; set; }
 
         [Column("uri_photo")]
-        public string UriPhoto { get; set; }
+        public string? UriPhoto { get; set; }
 
         [Column("id_type_produit")]
-        public int IdTypeProduit { get; set; }
+        public int? IdTypeProduit { get; set; }
 
         [Column("id_marque")]
-        public int IdMarque { get; set; }
+        public int? IdMarque { get; set; }
 
         [Column("stock_reel")]
         public int StockReel { get; set; }
@@ -39,11 +39,11 @@ namespace R5A08_TP1.Models.EntityFramework
 
         [ForeignKey(nameof(IdTypeProduit))]
         [InverseProperty(nameof(TypeProduit.ProduitsAssoc))]
-        public virtual TypeProduit TypeProduitAssoc { get; set; } = null!;
+        public virtual TypeProduit? TypeProduitAssoc { get; set; } = null!;
 
         [ForeignKey(nameof(IdMarque))]
         [InverseProperty(nameof(Marque.ProduitsAssocMarques))]
-        public virtual Marque MarqueAssoc { get; set; } = null!;
+        public virtual Marque? MarqueAssoc { get; set; } = null!;
 
     }
 }

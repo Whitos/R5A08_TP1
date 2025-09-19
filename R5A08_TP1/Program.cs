@@ -1,5 +1,6 @@
 using R5A08_TP1.Models.DataManager;
 using R5A08_TP1.Models.EntityFramework;
+using R5A08_TP1.Models.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,7 +11,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ProduitsDbContext>();
-builder.Services.AddScoped<ProduitManager>();  // manager tjrs addscoped jamais addsingleton
+builder.Services.AddScoped<IDataRepository<Produit>, ProduitManager>();  // manager tjrs addscoped jamais addsingleton
 
 var app = builder.Build();
 

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using R5A08_TP1.Models.EntityFramework;
@@ -11,9 +12,11 @@ using R5A08_TP1.Models.EntityFramework;
 namespace R5A08_TP1.Migrations
 {
     [DbContext(typeof(ProduitsDbContext))]
-    partial class ProduitsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250912141451_pdbmigra3")]
+    partial class pdbmigra3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -86,6 +89,7 @@ namespace R5A08_TP1.Migrations
                         .HasColumnName("stock_reel");
 
                     b.Property<string>("UriPhoto")
+                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("uri_photo");
 
