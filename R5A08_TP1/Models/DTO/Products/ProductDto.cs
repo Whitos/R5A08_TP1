@@ -1,6 +1,6 @@
-﻿namespace R5A08_TP1.Models.DTO
+﻿namespace R5A08_TP1.Models.DTO.Products
 {
-    public class ProduitDto
+    public class ProductDto
     {
         public int Id { get; set; }
         public string? Nom { get; set; }

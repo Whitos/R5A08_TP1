@@ -1,5 +1,6 @@
 using R5A08_TP1.Models.DataManager;
 using R5A08_TP1.Models.EntityFramework;
+using R5A08_TP1.Models.Mapping;
 using R5A08_TP1.Models.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,7 +13,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ProductsDbContext>();
 builder.Services.AddScoped<IDataRepository<Product>, ProductManager>();  // manager tjrs addscoped jamais addsingleton
-builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+builder.Services.AddAutoMapper(typeof(MapperProfile).Assembly);
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowBlazor",
