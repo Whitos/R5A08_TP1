@@ -1,4 +1,4 @@
-﻿@model IEnumerable<R5A08_TP1.Models.EntityFramework.Produit>
+﻿@model IEnumerable<R5A08_TP1.Models.EntityFramework.Product>
 
 @{
     ViewData["Title"] = "Index";
@@ -13,31 +13,31 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.NomProduit)
+                @Html.DisplayNameFor(model => model.NameProduct)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Description)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.NomPhoto)
+                @Html.DisplayNameFor(model => model.NamePhoto)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.UriPhoto)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.StockReel)
+                @Html.DisplayNameFor(model => model.ActualStock)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.StockMin)
+                @Html.DisplayNameFor(model => model.MinStock)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.StockMax)
+                @Html.DisplayNameFor(model => model.MaxStock)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.TypeProduitAssoc)
+                @Html.DisplayNameFor(model => model.RelatedTypeProduct)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.MarqueAssoc)
+                @Html.DisplayNameFor(model => model.RelatedBrand)
             </th>
             <th></th>
         </tr>
@@ -46,36 +46,36 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.NomProduit)
+                @Html.DisplayFor(modelItem => item.NameProduct)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Description)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.NomPhoto)
+                @Html.DisplayFor(modelItem => item.NamePhoto)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.UriPhoto)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.StockReel)
+                @Html.DisplayFor(modelItem => item.ActualStock)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.StockMin)
+                @Html.DisplayFor(modelItem => item.MinStock)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.StockMax)
+                @Html.DisplayFor(modelItem => item.MaxStock)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.TypeProduitAssoc.IdTypeProduit)
+                @Html.DisplayFor(modelItem => item.RelatedTypeProduct.IdTypeProduct)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.MarqueAssoc.IdMarque)
+                @Html.DisplayFor(modelItem => item.RelatedBrand.IdBrand)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.IdProduit">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.IdProduit">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.IdProduit">Delete</a>
+                <a asp-action="Edit" asp-route-id="@item.IdProduct">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.IdProduct">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.IdProduct">Delete</a>
             </td>
         </tr>
 }

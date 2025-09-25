@@ -11,9 +11,9 @@ using R5A08_TP1.Models.EntityFramework;
 
 namespace R5A08_TP1.Migrations
 {
-    [DbContext(typeof(ProduitsDbContext))]
-    [Migration("20250919113404_migraproduitsdb")]
-    partial class migraproduitsdb
+    [DbContext(typeof(ProductsDbContext))]
+    [Migration("20250920142728_Seed")]
+    partial class Seed
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -41,7 +41,19 @@ namespace R5A08_TP1.Migrations
 
                     b.HasKey("IdMarque");
 
-                    b.ToTable("Marque");
+                    b.ToTable("marque");
+
+                    b.HasData(
+                        new
+                        {
+                            IdMarque = 1,
+                            NomMarque = "Apple"
+                        },
+                        new
+                        {
+                            IdMarque = 2,
+                            NomMarque = "Samsung"
+                        });
                 });
 
             modelBuilder.Entity("R5A08_TP1.Models.EntityFramework.Produit", b =>
@@ -98,7 +110,35 @@ namespace R5A08_TP1.Migrations
 
                     b.HasIndex("IdTypeProduit");
 
-                    b.ToTable("Produit");
+                    b.ToTable("produit");
+
+                    b.HasData(
+                        new
+                        {
+                            IdProduit = 1,
+                            Description = "Dernier modèle Apple",
+                            IdMarque = 1,
+                            IdTypeProduit = 1,
+                            NomPhoto = "iphone15.jpg",
+                            NomProduit = "iPhone 15",
+                            StockMax = 0,
+                            StockMin = 0,
+                            StockReel = 0,
+                            UriPhoto = "/img/iphone15.jpg"
+                        },
+                        new
+                        {
+                            IdProduit = 2,
+                            Description = "Dernier modèle Samsung",
+                            IdMarque = 2,
+                            IdTypeProduit = 1,
+                            NomPhoto = "galaxyS24.jpg",
+                            NomProduit = "Galaxy S24",
+                            StockMax = 0,
+                            StockMin = 0,
+                            StockReel = 0,
+                            UriPhoto = "/img/galaxyS24.jpg"
+                        });
                 });
 
             modelBuilder.Entity("R5A08_TP1.Models.EntityFramework.TypeProduit", b =>
@@ -117,7 +157,19 @@ namespace R5A08_TP1.Migrations
 
                     b.HasKey("IdTypeProduit");
 
-                    b.ToTable("TypeProduit");
+                    b.ToTable("type_produit");
+
+                    b.HasData(
+                        new
+                        {
+                            IdTypeProduit = 1,
+                            NomTypeProduit = "Smartphone"
+                        },
+                        new
+                        {
+                            IdTypeProduit = 2,
+                            NomTypeProduit = "Ordinateur"
+                        });
                 });
 
             modelBuilder.Entity("R5A08_TP1.Models.EntityFramework.Produit", b =>

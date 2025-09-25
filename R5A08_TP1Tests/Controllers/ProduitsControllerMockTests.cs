@@ -18,14 +18,14 @@ namespace R5A08_TP1.Controllers.Tests
     [TestCategory("mock")]
     public class ProduitsControllerMockTests
     {
-        private readonly ProduitsDbContext _context;
-        private readonly ProduitsController _produitController;
-        private Mock<IDataRepository<Produit>> _dataRepository;
+        private readonly ProductsDbContext _context;
+        private readonly ProductsController _produitController;
+        private Mock<IDataRepository<Product>> _dataRepository;
 
         public ProduitsControllerMockTests()
         {
-            _dataRepository = new Mock<IDataRepository<Produit>>();
-            _produitController = new ProduitsController(_dataRepository.Object);
+            _dataRepository = new Mock<IDataRepository<Product>>();
+            _produitController = new ProductsController(_dataRepository.Object);
         }
 
 
@@ -33,12 +33,12 @@ namespace R5A08_TP1.Controllers.Tests
         public void ShouldGetProduct()
         {
             // Given : Un produit en enregistré
-            Produit produitInDb = new()
+            Product produitInDb = new()
             {
                 IdProduit = 30,
-                NomProduit = "Chaise",
+                NameProduct = "Chaise",
                 Description = "Une superbe chaise",
-                NomPhoto = "Une superbe chaise bleu",
+                NamePhoto = "Une superbe chaise bleu",
                 UriPhoto = "https://ikea.fr/chaise.jpg"
             };
 
@@ -47,15 +47,15 @@ namespace R5A08_TP1.Controllers.Tests
                 .ReturnsAsync(produitInDb);
 
             // When : On appelle la méthode GET de l'API pour récupérer le produit
-            ActionResult<Produit> action = _produitController.Get(produitInDb.IdProduit).GetAwaiter().GetResult();
+            ActionResult<Product> action = _produitController.Get(produitInDb.IdProduit).GetAwaiter().GetResult();
 
             // Then : On récupère le produit et le code de retour est 200
             _dataRepository.Verify(manager => manager.GetByIdAsync(produitInDb.IdProduit), Times.Once);
 
             Assert.IsNotNull(action);
-            Assert.IsInstanceOfType(action.Value, typeof(Produit));
+            Assert.IsInstanceOfType(action.Value, typeof(Product));
 
-            Produit returnProduct = action.Value;
+            Product returnProduct = action.Value;
             Assert.AreEqual(produitInDb, returnProduct);
         }
 
@@ -63,12 +63,12 @@ namespace R5A08_TP1.Controllers.Tests
         public void ShouldDeleteProduct()
         {
             // Given : Un produit enregistré
-            Produit produitInDb = new()
+            Product produitInDb = new()
             {
                 IdProduit = 20,
-                NomProduit = "Chaise",
+                NameProduct = "Chaise",
                 Description = "Une superbe chaise",
-                NomPhoto = "Une superbe chaise bleu",
+                NamePhoto = "Une superbe chaise bleu",
                 UriPhoto = "https://ikea.fr/chaise.jpg"
             };
 
@@ -94,18 +94,18 @@ namespace R5A08_TP1.Controllers.Tests
         public void ShouldNotDeleteProductBecauseProductDoesNotExist()
         {
             // Given : Un produit enregistré
-            Produit produitInDb = new()
+            Product produitInDb = new()
             {
                 IdProduit = 30,
-                NomProduit = "Chaise",
+                NameProduct = "Chaise",
                 Description = "Une superbe chaise",
-                NomPhoto = "Une superbe chaise bleu",
+                NamePhoto = "Une superbe chaise bleu",
                 UriPhoto = "https://ikea.fr/chaise.jpg"
             };
 
             _dataRepository
                 .Setup(manager => manager.GetByIdAsync(produitInDb.IdProduit))
-                .ReturnsAsync((Produit)null);
+                .ReturnsAsync((Product)null);
 
             // When : On souhaite supprimer un produit depuis l'API
             IActionResult action = _produitController.Delete(produitInDb.IdProduit).GetAwaiter().GetResult();
@@ -121,33 +121,33 @@ namespace R5A08_TP1.Controllers.Tests
         public void ShouldGetAllProducts()
         {
             // Given : Des produits enregistrées
-            IEnumerable<Produit> productInDb = [
+            IEnumerable<Product> productInDb = [
                 new()
             {
-                NomProduit = "Chaise",
+                NameProduct = "Chaise",
                 Description = "Une superbe chaise",
-                NomPhoto = "Une superbe chaise bleu",
+                NamePhoto = "Une superbe chaise bleu",
                 UriPhoto = "https://ikea.fr/chaise.jpg"
             },
             new()
             {
-                NomProduit = "Armoir",
+                NameProduct = "Armoir",
                 Description = "Une superbe armoire",
-                NomPhoto = "Une superbe armoire jaune",
+                NamePhoto = "Une superbe armoire jaune",
                 UriPhoto = "https://ikea.fr/armoire-jaune.jpg"
             }
             ];
 
             _dataRepository
                 .Setup(manager => manager.GetAllAsync())
-                .ReturnsAsync(new ActionResult<IEnumerable<Produit>>(productInDb));
+                .ReturnsAsync(new ActionResult<IEnumerable<Product>>(productInDb));
 
             // When : On souhaite récupérer tous les produits
             var products = _produitController.GetAll().GetAwaiter().GetResult();
 
             // Then : Tous les produits sont récupérés
             Assert.IsNotNull(products);
-            Assert.IsInstanceOfType(products.Value, typeof(IEnumerable<Produit>));
+            Assert.IsInstanceOfType(products.Value, typeof(IEnumerable<Product>));
             Assert.IsTrue(productInDb.SequenceEqual(products.Value));
 
             _dataRepository.Verify(manager => manager.GetAllAsync(), Times.Once);
@@ -159,10 +159,10 @@ namespace R5A08_TP1.Controllers.Tests
             //Given : Pas de produit trouvé par le manager
             _dataRepository
                 .Setup(manager => manager.GetByIdAsync(30))
-                .ReturnsAsync(new ActionResult<Produit>((Produit)null));
+                .ReturnsAsync(new ActionResult<Product>((Product)null));
 
             // When : On appelle la méthode get de mon api pour récupérer le produit
-            ActionResult<Produit> action = _produitController.Get(30).GetAwaiter().GetResult();
+            ActionResult<Product> action = _produitController.Get(30).GetAwaiter().GetResult();
 
             // Then : On ne renvoie rien et on renvoie NOT_FOUND (404)
             Assert.IsInstanceOfType(action.Result, typeof(NotFoundResult), "Ne renvoie pas 404");
@@ -175,12 +175,12 @@ namespace R5A08_TP1.Controllers.Tests
         public void ShouldCreateProduct()
         {
             // Given : Un produit a enregistré
-            Produit productToInsert = new()
+            Product productToInsert = new()
             {
                 IdProduit = 30,
-                NomProduit = "Chaise",
+                NameProduct = "Chaise",
                 Description = "Une superbe chaise",
-                NomPhoto = "Une superbe chaise bleu",
+                NamePhoto = "Une superbe chaise bleu",
                 UriPhoto = "https://ikea.fr/chaise.jpg"
             };
 
@@ -188,7 +188,7 @@ namespace R5A08_TP1.Controllers.Tests
                 .Setup(manager => manager.AddAsync(productToInsert));
 
             // When : On appel la méthode POST de l'API pour enregistrer le produit
-            ActionResult<Produit> action = _produitController.Create(productToInsert).GetAwaiter().GetResult();
+            ActionResult<Product> action = _produitController.Create(productToInsert).GetAwaiter().GetResult();
 
             // Then : Le produit est bien enregistré et le code renvoyé et CREATED (201)
             Assert.IsNotNull(action);
@@ -201,22 +201,22 @@ namespace R5A08_TP1.Controllers.Tests
         public void ShouldUpdateProduct()
         {
             // Given : Un produit à mettre à jour
-            Produit produitToEdit = new()
+            Product produitToEdit = new()
             {
                 IdProduit = 20,
-                NomProduit = "Bureau",
+                NameProduct = "Bureau",
                 Description = "Un super bureau",
-                NomPhoto = "Un super bureau bleu",
+                NamePhoto = "Un super bureau bleu",
                 UriPhoto = "https://ikea.fr/bureau.jpg"
             };
 
             // Une fois enregistré, on modifie certaines propriétés 
-            Produit updatedProduit = new()
+            Product updatedProduit = new()
             {
                 IdProduit = 20,
-                NomProduit = "Lit",
+                NameProduct = "Lit",
                 Description = "Un super lit",
-                NomPhoto = "Un super bureau bleu",
+                NamePhoto = "Un super bureau bleu",
                 UriPhoto = "https://ikea.fr/bureau.jpg"
             };
 
@@ -235,19 +235,19 @@ namespace R5A08_TP1.Controllers.Tests
             Assert.IsInstanceOfType(action, typeof(NoContentResult));
 
             _dataRepository.Verify(manager => manager.GetByIdAsync(produitToEdit.IdProduit), Times.Once);
-            _dataRepository.Verify(manager => manager.UpdateAsync(produitToEdit, It.IsAny<Produit>()), Times.Once);
+            _dataRepository.Verify(manager => manager.UpdateAsync(produitToEdit, It.IsAny<Product>()), Times.Once);
         }
 
         [TestMethod]
         public void ShouldNotUpdateProductBecauseIdInUrlIsDifferent()
         {
             // Given : Un produit à mettre à jour
-            Produit produitToEdit = new()
+            Product produitToEdit = new()
             {
                 IdProduit = 20,
-                NomProduit = "Bureau",
+                NameProduct = "Bureau",
                 Description = "Un super bureau",
-                NomPhoto = "Un super bureau bleu",
+                NamePhoto = "Un super bureau bleu",
                 UriPhoto = "https://ikea.fr/bureau.jpg"
             };
 
@@ -261,25 +261,25 @@ namespace R5A08_TP1.Controllers.Tests
             Assert.IsInstanceOfType(action, typeof(BadRequestResult));
 
             _dataRepository.Verify(manager => manager.GetByIdAsync(produitToEdit.IdProduit), Times.Never);
-            _dataRepository.Verify(manager => manager.UpdateAsync(produitToEdit, It.IsAny<Produit>()), Times.Never);
+            _dataRepository.Verify(manager => manager.UpdateAsync(produitToEdit, It.IsAny<Product>()), Times.Never);
         }
 
         [TestMethod]
         public void ShouldNotUpdateProductBecauseProductDoesNotExist()
         {
             // Given : Un produit à mettre à jour qui n'est pas enregistré
-            Produit produitToEdit = new()
+            Product produitToEdit = new()
             {
                 IdProduit = 20,
-                NomProduit = "Bureau",
+                NameProduct = "Bureau",
                 Description = "Un super bureau",
-                NomPhoto = "Un super bureau bleu",
+                NamePhoto = "Un super bureau bleu",
                 UriPhoto = "https://ikea.fr/bureau.jpg"
             };
 
             _dataRepository
                 .Setup(manager => manager.GetByIdAsync(produitToEdit.IdProduit))
-                .ReturnsAsync((Produit)null);
+                .ReturnsAsync((Product)null);
 
             // When : On appelle la méthode PUT du controller pour mettre à jour un produit qui n'est pas enregistré
             IActionResult action = _produitController.Update(produitToEdit.IdProduit, produitToEdit).GetAwaiter().GetResult();
@@ -289,7 +289,7 @@ namespace R5A08_TP1.Controllers.Tests
             Assert.IsInstanceOfType(action, typeof(NotFoundResult));
 
             _dataRepository.Verify(manager => manager.GetByIdAsync(produitToEdit.IdProduit), Times.Once);
-            _dataRepository.Verify(manager => manager.UpdateAsync(produitToEdit, It.IsAny<Produit>()), Times.Never);
+            _dataRepository.Verify(manager => manager.UpdateAsync(produitToEdit, It.IsAny<Product>()), Times.Never);
 
         }
     }

@@ -6,13 +6,13 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace R5A08_TP1.Migrations
 {
     /// <inheritdoc />
-    public partial class pdbmigra : Migration
+    public partial class Init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Marque",
+                name: "marque",
                 columns: table => new
                 {
                     id_marque = table.Column<int>(type: "integer", nullable: false)
@@ -21,11 +21,11 @@ namespace R5A08_TP1.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Marque", x => x.id_marque);
+                    table.PrimaryKey("PK_marque", x => x.id_marque);
                 });
 
             migrationBuilder.CreateTable(
-                name: "TypeProduit",
+                name: "type_produit",
                 columns: table => new
                 {
                     id_type_produit = table.Column<int>(type: "integer", nullable: false)
@@ -34,11 +34,11 @@ namespace R5A08_TP1.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TypeProduit", x => x.id_type_produit);
+                    table.PrimaryKey("PK_type_produit", x => x.id_type_produit);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Produit",
+                name: "produit",
                 columns: table => new
                 {
                     id_produit = table.Column<int>(type: "integer", nullable: false)
@@ -46,36 +46,36 @@ namespace R5A08_TP1.Migrations
                     nom_produit = table.Column<string>(type: "text", nullable: false),
                     description = table.Column<string>(type: "text", nullable: false),
                     nom_photo = table.Column<string>(type: "text", nullable: false),
-                    uri_photo = table.Column<string>(type: "text", nullable: false),
-                    id_type_produit = table.Column<int>(type: "integer", nullable: false),
-                    id_marque = table.Column<int>(type: "integer", nullable: false),
+                    uri_photo = table.Column<string>(type: "text", nullable: true),
+                    id_type_produit = table.Column<int>(type: "integer", nullable: true),
+                    id_marque = table.Column<int>(type: "integer", nullable: true),
                     stock_reel = table.Column<int>(type: "integer", nullable: false),
                     stock_min = table.Column<int>(type: "integer", nullable: false),
                     stock_max = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Produit", x => x.id_produit);
+                    table.PrimaryKey("PK_produit", x => x.id_produit);
                     table.ForeignKey(
                         name: "FK_produits_marque",
                         column: x => x.id_marque,
-                        principalTable: "Marque",
+                        principalTable: "marque",
                         principalColumn: "id_marque");
                     table.ForeignKey(
                         name: "FK_type_produit_produits",
                         column: x => x.id_type_produit,
-                        principalTable: "TypeProduit",
+                        principalTable: "type_produit",
                         principalColumn: "id_type_produit");
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Produit_id_marque",
-                table: "Produit",
+                name: "IX_produit_id_marque",
+                table: "produit",
                 column: "id_marque");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Produit_id_type_produit",
-                table: "Produit",
+                name: "IX_produit_id_type_produit",
+                table: "produit",
                 column: "id_type_produit");
         }
 
@@ -83,13 +83,13 @@ namespace R5A08_TP1.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Produit");
+                name: "produit");
 
             migrationBuilder.DropTable(
-                name: "Marque");
+                name: "marque");
 
             migrationBuilder.DropTable(
-                name: "TypeProduit");
+                name: "type_produit");
         }
     }
 }

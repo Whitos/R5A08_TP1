@@ -16,34 +16,34 @@ namespace R5A08_TP1.Controllers.Tests
     [TestClass()]
     public class ProduitsControllerTests
     {
-        private readonly ProduitsDbContext _context;
-        private readonly ProduitsController _produitController;
-        private IDataRepository<Produit> _dataRepository;
+        private readonly ProductsDbContext _context;
+        private readonly ProductsController _produitController;
+        private IDataRepository<Product> _dataRepository;
 
         public ProduitsControllerTests()
         {
-            _context = new ProduitsDbContext();
+            _context = new ProductsDbContext();
 
-            _dataRepository = new ProduitManager(_context);
-            _produitController = new ProduitsController(_dataRepository);
+            _dataRepository = new ProductManager(_context);
+            _produitController = new ProductsController(_dataRepository);
         }
 
         [TestMethod()]
         public void ShouldGetAllProduits()
         {
-            IEnumerable<Produit> produitsInDb = [
+            IEnumerable<Product> produitsInDb = [
                 new ()
                 {
-                    NomProduit = "Chaise",
+                    NameProduct = "Chaise",
                     Description = "Une chaise nul",
-                    NomPhoto = "chaise.jpg",
+                    NamePhoto = "chaise.jpg",
                     UriPhoto = "https://ikea.fr/chaise.jpg"
                 },
                 new ()
                 {
-                    NomProduit = "Armoir",
+                    NameProduct = "Armoir",
                     Description = "Une superbe armoire",
-                    NomPhoto = "Une superbe armoire jaune",
+                    NamePhoto = "Une superbe armoire jaune",
                     UriPhoto = "https://ikea.fr/armoire-jaune.jpg"
                 }
             ];
@@ -56,18 +56,18 @@ namespace R5A08_TP1.Controllers.Tests
 
             // Then : Tous les produits sont récupérés
             Assert.IsNotNull(products);
-            Assert.IsInstanceOfType(products.Value, typeof(IEnumerable<Produit>));
+            Assert.IsInstanceOfType(products.Value, typeof(IEnumerable<Product>));
         }
 
         [TestMethod()]
         public void ShouldGetProduit()
         {
             // Given: un produit en base de données 
-            Produit produitInDb = new Produit
+            Product produitInDb = new Product
             {
-                NomProduit = "Chaise",
+                NameProduct = "Chaise",
                 Description = "Une chaise nul",
-                NomPhoto = "chaise.jpg",
+                NamePhoto = "chaise.jpg",
             };
 
             _context.Produits.Add(produitInDb);
@@ -76,14 +76,14 @@ namespace R5A08_TP1.Controllers.Tests
 
             // When: j'appelle la méthode Get de mon api pour récuperer le produit
 
-            ActionResult<Produit> action = _produitController.Get(produitInDb.IdProduit).GetAwaiter().GetResult();
+            ActionResult<Product> action = _produitController.Get(produitInDb.IdProduit).GetAwaiter().GetResult();
 
             // Then: on recupere le produit et le code de retour est de 200 (OK)
 
             Assert.IsNotNull(action);
-            Assert.IsInstanceOfType(action.Value, typeof(Produit));
+            Assert.IsInstanceOfType(action.Value, typeof(Product));
 
-            Produit returnProduct = action.Value;
+            Product returnProduct = action.Value;
             Assert.AreEqual(produitInDb.IdProduit, returnProduct.IdProduit);
             // Assert.IsInstanceOfType(action.Result, typeof(OkObjectResult));
 
@@ -93,7 +93,7 @@ namespace R5A08_TP1.Controllers.Tests
         public void GetProductShouldReturnNotFound()
         {
             // When : J'appelle la méthode get de mon api pour récupérer le produit
-            ActionResult<Produit> action = _produitController.Get(0).GetAwaiter().GetResult();
+            ActionResult<Product> action = _produitController.Get(0).GetAwaiter().GetResult();
 
             // Then : On ne renvoie rien et on renvoie 404
             Assert.IsInstanceOfType(action.Result, typeof(NotFoundResult), "Ne renvoie pas 404");
@@ -104,19 +104,19 @@ namespace R5A08_TP1.Controllers.Tests
         public void ShouldCreateProduct()
         {
             // Given
-            Produit productToInsert = new Produit()
+            Product productToInsert = new Product()
             {
-                NomProduit = "Chaise",
+                NameProduct = "Chaise",
                 Description = "Une superbe chaise",
-                NomPhoto = "Une superbe chaise bleu",
+                NamePhoto = "Une superbe chaise bleu",
                 UriPhoto = "https://ikea.fr/chaise.jpg"
             };
 
             // When
-            ActionResult<Produit> action = _produitController.Create(productToInsert).GetAwaiter().GetResult();
+            ActionResult<Product> action = _produitController.Create(productToInsert).GetAwaiter().GetResult();
 
             // Then
-            Produit productInDb = _context.Produits.Find(productToInsert.IdProduit);
+            Product productInDb = _context.Produits.Find(productToInsert.IdProduit);
 
             Assert.IsNotNull(productInDb);
             Assert.IsNotNull(action);
@@ -127,11 +127,11 @@ namespace R5A08_TP1.Controllers.Tests
         public void ShouldDeleteProduct()
         {
             // Given: un produit en base de données 
-            Produit produitInDb = new Produit()
+            Product produitInDb = new Product()
             {
-                NomProduit = "Chaise3",
+                NameProduct = "Chaise3",
                 Description = "Une chaise nul",
-                NomPhoto = "chaise.jpg",
+                NamePhoto = "chaise.jpg",
                 UriPhoto = "https://ikea.fr/chaise.jpg"
             };
 
@@ -151,12 +151,12 @@ namespace R5A08_TP1.Controllers.Tests
         public void ShouldUpdateProduct()
         {
             // Given : Un produit à mettre à jour
-            Produit produitToEdit = new()
+            Product produitToEdit = new()
             {
               
-                NomProduit = "Bureau",
+                NameProduct = "Bureau",
                 Description = "Un super bureau",
-                NomPhoto = "Un super bureau bleu",
+                NamePhoto = "Un super bureau bleu",
                 UriPhoto = "https://ikea.fr/bureau.jpg"
             };
 
@@ -164,7 +164,7 @@ namespace R5A08_TP1.Controllers.Tests
             _context.SaveChanges();
 
             // Une fois enregistré, on modifie certaines propriétés 
-            produitToEdit.NomProduit = "Lit";
+            produitToEdit.NameProduct = "Lit";
             produitToEdit.Description = "Un super lit";
 
             // When : On appelle la méthode PUT du controller pour mettre à jour le produit
@@ -174,7 +174,7 @@ namespace R5A08_TP1.Controllers.Tests
             Assert.IsNotNull(action);
             Assert.IsInstanceOfType(action, typeof(NoContentResult));
 
-            Produit editedProductInDb = _context.Produits.Find(produitToEdit.IdProduit);
+            Product editedProductInDb = _context.Produits.Find(produitToEdit.IdProduit);
 
             Assert.IsNotNull(editedProductInDb);
             Assert.AreEqual(produitToEdit, editedProductInDb);
@@ -184,18 +184,18 @@ namespace R5A08_TP1.Controllers.Tests
         public void ShouldNotUpdateProductBecauseIdInUrlIsDifferent()
         {
             // Given : Un produit à mettre à jour
-            Produit produitToEdit = new()
+            Product produitToEdit = new()
             {
-                NomProduit = "Bureau",
+                NameProduct = "Bureau",
                 Description = "Un super bureau",
-                NomPhoto = "Un super bureau bleu",
+                NamePhoto = "Un super bureau bleu",
                 UriPhoto = "https://ikea.fr/bureau.jpg"
             };
 
             _context.Produits.Add(produitToEdit);
             _context.SaveChanges();
 
-            produitToEdit.NomProduit = "Lit";
+            produitToEdit.NameProduct = "Lit";
             produitToEdit.Description = "Un super lit";
 
             // When : On appelle la méthode PUT du controller pour mettre à jour le produit,
@@ -211,12 +211,12 @@ namespace R5A08_TP1.Controllers.Tests
         public void ShouldNotUpdateProductBecauseProductDoesNotExist()
         {
             // Given : Un produit à mettre à jour qui n'est pas enregistré
-            Produit produitToEdit = new()
+            Product produitToEdit = new()
             {
                 IdProduit = 20,
-                NomProduit = "Bureau",
+                NameProduct = "Bureau",
                 Description = "Un super bureau",
-                NomPhoto = "Un super bureau bleu",
+                NamePhoto = "Un super bureau bleu",
                 UriPhoto = "https://ikea.fr/bureau.jpg"
             };
 
@@ -232,11 +232,11 @@ namespace R5A08_TP1.Controllers.Tests
         public void ShouldNotDeleteProductBecauseProductDoesNotExist()
         {
             // Given : Un produit enregistré
-            Produit produitInDb = new Produit()
+            Product produitInDb = new Product()
             {
-                NomProduit = "Chaise",
+                NameProduct = "Chaise",
                 Description = "Une superbe chaise",
-                NomPhoto = "Une superbe chaise bleu",
+                NamePhoto = "Une superbe chaise bleu",
                 UriPhoto = "https://ikea.fr/chaise.jpg"
             };
 

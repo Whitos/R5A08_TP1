@@ -1,4 +1,4 @@
-﻿@model R5A08_TP1.Models.EntityFramework.Produit
+﻿@model R5A08_TP1.Models.EntityFramework.Product
 
 @{
     ViewData["Title"] = "Edit";
@@ -6,7 +6,7 @@
 
 <h1>Edit</h1>
 
-<h4>Produit</h4>
+<h4>Product</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -14,9 +14,9 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="IdProduit" />
             <div class="form-group">
-                <label asp-for="NomProduit" class="control-label"></label>
-                <input asp-for="NomProduit" class="form-control" />
-                <span asp-validation-for="NomProduit" class="text-danger"></span>
+                <label asp-for="NameProduct" class="control-label"></label>
+                <input asp-for="NameProduct" class="form-control" />
+                <span asp-validation-for="NameProduct" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Description" class="control-label"></label>
@@ -24,9 +24,9 @@
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="NomPhoto" class="control-label"></label>
-                <input asp-for="NomPhoto" class="form-control" />
-                <span asp-validation-for="NomPhoto" class="text-danger"></span>
+                <label asp-for="NamePhoto" class="control-label"></label>
+                <input asp-for="NamePhoto" class="form-control" />
+                <span asp-validation-for="NamePhoto" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="UriPhoto" class="control-label"></label>
@@ -34,29 +34,29 @@
                 <span asp-validation-for="UriPhoto" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="IdTypeProduit" class="control-label"></label>
-                <select asp-for="IdTypeProduit" class="form-control" asp-items="ViewBag.IdTypeProduit"></select>
-                <span asp-validation-for="IdTypeProduit" class="text-danger"></span>
+                <label asp-for="IdTypeProduct" class="control-label"></label>
+                <select asp-for="IdTypeProduct" class="form-control" asp-items="ViewBag.IdTypeProduct"></select>
+                <span asp-validation-for="IdTypeProduct" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="IdMarque" class="control-label"></label>
-                <select asp-for="IdMarque" class="form-control" asp-items="ViewBag.IdMarque"></select>
-                <span asp-validation-for="IdMarque" class="text-danger"></span>
+                <label asp-for="IdBrand" class="control-label"></label>
+                <select asp-for="IdBrand" class="form-control" asp-items="ViewBag.IdBrand"></select>
+                <span asp-validation-for="IdBrand" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="StockReel" class="control-label"></label>
-                <input asp-for="StockReel" class="form-control" />
-                <span asp-validation-for="StockReel" class="text-danger"></span>
+                <label asp-for="ActualStock" class="control-label"></label>
+                <input asp-for="ActualStock" class="form-control" />
+                <span asp-validation-for="ActualStock" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="StockMin" class="control-label"></label>
-                <input asp-for="StockMin" class="form-control" />
-                <span asp-validation-for="StockMin" class="text-danger"></span>
+                <label asp-for="MinStock" class="control-label"></label>
+                <input asp-for="MinStock" class="form-control" />
+                <span asp-validation-for="MinStock" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="StockMax" class="control-label"></label>
-                <input asp-for="StockMax" class="form-control" />
-                <span asp-validation-for="StockMax" class="text-danger"></span>
+                <label asp-for="MaxStock" class="control-label"></label>
+                <input asp-for="MaxStock" class="form-control" />
+                <span asp-validation-for="MaxStock" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />

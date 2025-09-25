@@ -1,0 +1,27 @@
+﻿@page "/add-produit"
+@inject IService<Produit> produitService
+@inject NavigationManager navManager
+
+<h3>Ajouter un produit</h3>
+
+<EditForm Model="produit" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label for="Nom">Nom</label>
+        <InputText id="Nom" class="form-control" @bind-Value="produit.NomProduit" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Ajouter</button>
+</EditForm>
+
+@code {
+    private Produit produit = new Produit();
+
+    private async Task HandleValidSubmit()
+    {
+        await produitService.AddAsync(produit);
+        navManager.NavigateTo("/produits");
+    }
+}

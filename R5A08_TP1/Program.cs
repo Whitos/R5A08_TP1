@@ -10,8 +10,9 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddDbContext<ProduitsDbContext>();
-builder.Services.AddScoped<IDataRepository<Produit>, ProduitManager>();  // manager tjrs addscoped jamais addsingleton
+builder.Services.AddDbContext<ProductsDbContext>();
+builder.Services.AddScoped<IDataRepository<Product>, ProductManager>();  // manager tjrs addscoped jamais addsingleton
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowBlazor",

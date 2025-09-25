@@ -11,9 +11,9 @@ using R5A08_TP1.Models.EntityFramework;
 
 namespace R5A08_TP1.Migrations
 {
-    [DbContext(typeof(ProduitsDbContext))]
-    [Migration("20250912143453_pdbmigra4")]
-    partial class pdbmigra4
+    [DbContext(typeof(ProductsDbContext))]
+    [Migration("20250920141517_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -41,7 +41,7 @@ namespace R5A08_TP1.Migrations
 
                     b.HasKey("IdMarque");
 
-                    b.ToTable("Marque");
+                    b.ToTable("marque");
                 });
 
             modelBuilder.Entity("R5A08_TP1.Models.EntityFramework.Produit", b =>
@@ -98,7 +98,7 @@ namespace R5A08_TP1.Migrations
 
                     b.HasIndex("IdTypeProduit");
 
-                    b.ToTable("Produit");
+                    b.ToTable("produit");
                 });
 
             modelBuilder.Entity("R5A08_TP1.Models.EntityFramework.TypeProduit", b =>
@@ -117,7 +117,7 @@ namespace R5A08_TP1.Migrations
 
                     b.HasKey("IdTypeProduit");
 
-                    b.ToTable("TypeProduit");
+                    b.ToTable("type_produit");
                 });
 
             modelBuilder.Entity("R5A08_TP1.Models.EntityFramework.Produit", b =>

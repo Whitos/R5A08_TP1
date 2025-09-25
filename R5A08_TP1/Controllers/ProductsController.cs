@@ -11,13 +11,13 @@ using R5A08_TP1.Models.Repository;
 
 namespace R5A08_TP1.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/products")]
     [ApiController]
-    public class ProduitsController : Controller
+    public class ProductsController : Controller
     {
-        private readonly IDataRepository<Produit> dataRepository;
+        private readonly IDataRepository<Product> dataRepository;
 
-        public ProduitsController(IDataRepository<Produit> dataRepo)
+        public ProductsController(IDataRepository<Product> dataRepo)
         {
             dataRepository = dataRepo;
         }
@@ -25,7 +25,7 @@ namespace R5A08_TP1.Controllers
         [HttpGet("{id}")]
         [ActionName("GetById")]
 
-        public async Task<ActionResult<Produit>> Get(int id)
+        public async Task<ActionResult<Product>> Get(int id)
         {
             var result = await dataRepository.GetByIdAsync(id);
 
@@ -38,31 +38,31 @@ namespace R5A08_TP1.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Produit>>> GetAll()
+        public async Task<ActionResult<IEnumerable<Product>>> GetAll()
         {
             return await dataRepository.GetAllAsync();
         }
 
         [HttpPost]
-        public async Task<ActionResult<Produit>> Create(Produit produit)
+        public async Task<ActionResult<Product>> Create(Product product)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            await dataRepository.AddAsync(produit);
-            return CreatedAtAction("GetById", new { id = produit.IdProduit }, produit);
+            await dataRepository.AddAsync(product);
+            return CreatedAtAction("GetById", new { id = product.IdProduct }, product);
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            ActionResult<Produit> produitToDelete = await dataRepository.GetByIdAsync(id);
-            if (produitToDelete.Value == null)
+            ActionResult<Product> productToDelete = await dataRepository.GetByIdAsync(id);
+            if (productToDelete.Value == null)
             {
                 return NotFound();
             }
-            await dataRepository.DeleteAsync(produitToDelete.Value);
+            await dataRepository.DeleteAsync(productToDelete.Value);
             return NoContent();
         }
 
@@ -70,21 +70,21 @@ namespace R5A08_TP1.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> Update(int id, [FromBody] Produit produit)
+        public async Task<IActionResult> Update(int id, [FromBody] Product product)
         {
-            if (id != produit.IdProduit)
+            if (id != product.IdProduct)
             {
                 return BadRequest();
             }
 
-            ActionResult<Produit?> prodToUpdate = await dataRepository.GetByIdAsync(id);
+            ActionResult<Product?> productToUpdate = await dataRepository.GetByIdAsync(id);
 
-            if (prodToUpdate.Value == null)
+            if (productToUpdate.Value == null)
             {
                 return NotFound();
             }
 
-            await dataRepository.UpdateAsync(prodToUpdate.Value, produit);
+            await dataRepository.UpdateAsync(productToUpdate.Value, product);
             return NoContent();
         }
     }

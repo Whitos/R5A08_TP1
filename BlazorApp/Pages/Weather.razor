@@ -1,5 +1,5 @@
-﻿@page "/weather"
-@inject IService<Produit> Service
+﻿@page "/produits"
+@inject IService<Produit> produitService
  
 <PageTitle>Produits</PageTitle>
 
@@ -20,7 +20,9 @@ else
             <tr>
                 <th>Nom</th>
                 <th>Description</th>
-                <th>Photo</th>
+                <th>Marque</th>
+                <th>Type de Produit</th>
+@*                 <th>Photo</th> *@
             </tr>
         </thead>
         <tbody>
@@ -29,8 +31,14 @@ else
                 <tr>
                     <td>@produit.NomProduit</td>
                     <td>@produit.Description</td>
-                    <td>
+                    <td>@produit.IdMarque</td>
+                    <td>@produit.IdTypeProduit</td>
+                   @*  <td>
                         <img src="@produit.UriPhoto" alt="@produit.NomProduit" width="100" />
+                    </td> *@
+                    <td>
+                        <a class="btn btn-sm btn-warning" href="/edit-produit/@produit.IdProduit">Modifier</a>
+                        @* <button class="btn btn-sm btn-danger" @onclick="() => DeleteProduit(produit.IdProduit)">Supprimer</button> *@
                     </td>
                 </tr>
             }
@@ -43,6 +51,6 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        produits = await Service.GetAllAsync();
+        produits = await produitService.GetAllAsync();
     }
 }
