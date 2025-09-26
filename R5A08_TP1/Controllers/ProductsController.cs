@@ -42,10 +42,10 @@ namespace R5A08_TP1.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ProductListDto>>> GetAll()
+        public async Task<ActionResult<IEnumerable<ProductDto>>> GetAll()
         {
             var products = await dataRepository.GetAllAsync();
-            var dtos = _mapper.Map<IEnumerable<ProductListDto>>(products.Value);
+            var dtos = _mapper.Map<IEnumerable<ProductDto>>(products.Value);
             return Ok(dtos);
         }
 

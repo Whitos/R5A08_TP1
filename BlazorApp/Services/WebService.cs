@@ -3,44 +3,44 @@ using System.Net.Http.Json;
 
 namespace BlazorApp.Services
 {
-    public class WebService : IService<Produit>
+    public class WebService : IService<Product>
     {
         private readonly HttpClient httpClient = new()
         {
             BaseAddress = new Uri("https://localhost:7234/api/")
         };
 
-        public async Task AddAsync(Produit produit)
+        public async Task AddAsync(Product product)
         {
-            await httpClient.PostAsJsonAsync<Produit>("produits", produit);
+            await httpClient.PostAsJsonAsync<Product>("products", product);
         }
 
         public async Task DeleteAsync(int id)
         {
-            await httpClient.DeleteAsync($"produits/{id}");
+            await httpClient.DeleteAsync($"products/{id}");
         }
 
-        public async Task<List<Produit>?> GetAllAsync()
+        public async Task<List<Product>?> GetAllAsync()
         {
-            return await httpClient.GetFromJsonAsync<List<Produit>?>("produits");
+            return await httpClient.GetFromJsonAsync<List<Product>?>("products");
         }
 
-        public async Task<Produit?> GetByIdAsync(int id)
+        public async Task<Product?> GetByIdAsync(int id)
         {
-            return await httpClient.GetFromJsonAsync<Produit?>($"produits/{id}");
+            return await httpClient.GetFromJsonAsync<Product?>($"products/{id}");
         }
 
-        public async Task<Produit?> GetByNameAsync(string name)
+        public async Task<Product?> GetByNameAsync(string name)
         {
-            var response = await httpClient.PostAsJsonAsync("produits/search", name);
+            var response = await httpClient.PostAsJsonAsync("products/search", name);
             response.EnsureSuccessStatusCode();
 
-            return await response.Content.ReadFromJsonAsync<Produit>();
+            return await response.Content.ReadFromJsonAsync<Product>();
         }
 
-        public async Task UpdateAsync(Produit updatedEntity)
+        public async Task UpdateAsync(Product updatedEntity)
         {
-            await httpClient.PutAsJsonAsync<Produit>($"produits/{updatedEntity.IdProduit}", updatedEntity);
+            await httpClient.PutAsJsonAsync<Product>($"products/{updatedEntity.IdProduct}", updatedEntity);
         }
     }
 }

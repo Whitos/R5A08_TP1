@@ -8,6 +8,8 @@ namespace R5A08_TP1.Models.EntityFramework;
 public partial class ProductsDbContext : DbContext
 {
     public DbSet<Product> Products { get; set; }
+    public DbSet<Brand> Brands { get; set; }
+    public DbSet<TypeProduct> TypeProducts { get; set; }
     public ProductsDbContext()
     {
     }

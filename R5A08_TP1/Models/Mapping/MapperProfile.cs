@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using R5A08_TP1.Models.DTO.Common;
 using R5A08_TP1.Models.DTO.Products;
 using R5A08_TP1.Models.EntityFramework;
 
@@ -9,44 +8,38 @@ namespace R5A08_TP1.Models.Mapping
     {
         public MapperProfile()
         {
-            // Product -> ProductListDto (pour GET /products)
-            CreateMap<Product, ProductListDto>()
-                .ForMember(d => d.Id, m => m.MapFrom(s => s.IdProduct))
-                .ForMember(d => d.BrandName, m => m.MapFrom(s => s.RelatedBrand != null ? s.RelatedBrand.NameBrand : null))
-                .ForMember(d => d.TypeProductName, m => m.MapFrom(s => s.RelatedTypeProduct != null ? s.RelatedTypeProduct.NameTypeProduct : null));
+            // Product -> ProductDto (GET /products)
+            CreateMap<Product, ProductDto>()
+                .ForMember(d => d.IdProduct, m => m.MapFrom(s => s.IdProduct))
+                .ForMember(d => d.NameProduct, m => m.MapFrom(s => s.NameProduct))
+                .ForMember(d => d.Brand, m => m.MapFrom(s => s.RelatedBrand.NameBrand))
+                .ForMember(d => d.Type, m => m.MapFrom(s => s.RelatedTypeProduct.NameTypeProduct));
 
-            // Product -> ProductDetailDto (pour GET /products/{id})
+            // Product -> ProductDetailDto (GET /products/{id})
             CreateMap<Product, ProductDetailDto>()
-                .ForMember(d => d.Id, m => m.MapFrom(s => s.IdProduct))
-                .ForMember(d => d.Brand, m => m.MapFrom(s => s.RelatedBrand))
-                .ForMember(d => d.TypeProduct, m => m.MapFrom(s => s.RelatedTypeProduct));
+                .ForMember(d => d.IdProduct, m => m.MapFrom(s => s.IdProduct))
+                .ForMember(d => d.NameProduct, m => m.MapFrom(s => s.NameProduct))
+                .ForMember(d => d.Description, m => m.MapFrom(s => s.Description))
+                .ForMember(d => d.NamePhoto, m => m.MapFrom(s => s.UriPhoto))
+                .ForMember(d => d.Brand, m => m.MapFrom(s => s.RelatedBrand.NameBrand))
+                .ForMember(d => d.Type, m => m.MapFrom(s => s.RelatedTypeProduct.NameTypeProduct));
 
-            // ProductCreateDto -> Product (pour POST /products)
+            // ProductCreateDto -> Product (POST)
             CreateMap<ProductCreateDto, Product>()
                 .ForMember(d => d.IdBrand, m => m.MapFrom(s => s.IdBrand))
                 .ForMember(d => d.IdTypeProduct, m => m.MapFrom(s => s.IdTypeProduct))
-                .ForMember(d => d.IdProduct, m => m.Ignore()); // L'ID sera généré par la base de données
+                .ForMember(d => d.IdProduct, m => m.Ignore());
 
-            // Product -> ProductCreateDto (pour la réponse POST)
+            // Product -> ProductCreateDto (response POST)
             CreateMap<Product, ProductCreateDto>()
                 .ForMember(d => d.IdBrand, m => m.MapFrom(s => s.IdBrand))
                 .ForMember(d => d.IdTypeProduct, m => m.MapFrom(s => s.IdTypeProduct));
 
-            // ProductUpdateDto -> Product (pour PUT /products/{id})
+            // ProductUpdateDto -> Product (PUT)
             CreateMap<ProductUpdateDto, Product>()
                 .ForMember(d => d.IdBrand, m => m.MapFrom(s => s.IdBrand))
                 .ForMember(d => d.IdTypeProduct, m => m.MapFrom(s => s.IdTypeProduct))
-                .ForMember(d => d.IdProduct, m => m.Ignore()); // L'ID sera défini manuellement
-
-            // Brand -> BrandDto
-            CreateMap<Brand, BrandDto>()
-                .ForMember(d => d.Id, m => m.MapFrom(s => s.IdBrand))
-                .ForMember(d => d.Name, m => m.MapFrom(s => s.NameBrand));
-
-            // TypeProduct -> TypeProductDto
-            CreateMap<TypeProduct, TypeProductDto>()
-                .ForMember(d => d.Id, m => m.MapFrom(s => s.IdTypeProduct))
-                .ForMember(d => d.Name, m => m.MapFrom(s => s.NameTypeProduct));
+                .ForMember(d => d.IdProduct, m => m.Ignore());
         }
     }
 }

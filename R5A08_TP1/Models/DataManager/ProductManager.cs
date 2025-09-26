@@ -26,7 +26,7 @@ namespace R5A08_TP1.Models.DataManager
 
         public async Task<ActionResult<Product?>> GetByStringAsync(string str)
         {
-            throw new NotImplementedException();
+            return await dbContext.Products.FirstOrDefaultAsync(p => p.NameProduct == str);
         }
 
         public async Task AddAsync(Product entity)

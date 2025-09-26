@@ -1,15 +1,15 @@
-﻿@page "/produits"
-@inject IService<Produit> produitService
+﻿@page "/products"
+@inject IService<Product> productService
  
 <PageTitle>Produits</PageTitle>
 
 <h1>Liste des produits</h1>
 
-@if (produits == null)
+@if (products == null)
 {
     <p><em>Chargement...</em></p>
 }
-else if (!produits.Any())
+else if (!products.Any())
 {
     <p><em>Aucun produit trouvé.</em></p>
 }
@@ -26,18 +26,18 @@ else
             </tr>
         </thead>
         <tbody>
-            @foreach (var produit in produits)
+            @foreach (var produit in products)
             {
                 <tr>
-                    <td>@produit.NomProduit</td>
+                    <td>@produit.NameProduct</td>
                     <td>@produit.Description</td>
-                    <td>@produit.IdMarque</td>
-                    <td>@produit.IdTypeProduit</td>
+                    <td>@produit.IdBrand</td>
+                    <td>@produit.IdTypeProduct</td>
                    @*  <td>
                         <img src="@produit.UriPhoto" alt="@produit.NomProduit" width="100" />
                     </td> *@
                     <td>
-                        <a class="btn btn-sm btn-warning" href="/edit-produit/@produit.IdProduit">Modifier</a>
+                        <a class="btn btn-sm btn-warning" href="/edit-produit/@produit.IdProduct">Modifier</a>
                         @* <button class="btn btn-sm btn-danger" @onclick="() => DeleteProduit(produit.IdProduit)">Supprimer</button> *@
                     </td>
                 </tr>
@@ -47,10 +47,10 @@ else
 }
 
 @code {
-    private List<Produit>? produits;
+    private List<Product>? products;
 
     protected override async Task OnInitializedAsync()
     {
-        produits = await produitService.GetAllAsync();
+        products = await productService.GetAllAsync();
     }
 }
