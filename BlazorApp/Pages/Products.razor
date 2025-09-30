@@ -23,21 +23,22 @@ else
                 <th>Marque</th>
                 <th>Type de Produit</th>
 @*                 <th>Photo</th> *@
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var produit in products)
+            @foreach (var product in products)
             {
                 <tr>
-                    <td>@produit.NameProduct</td>
-                    <td>@produit.Description</td>
-                    <td>@produit.IdBrand</td>
-                    <td>@produit.IdTypeProduct</td>
+                    <td>@product.NameProduct</td>
+                    <td>@product.Description</td>
+                    <td>@product.NameBrand</td>
+                    <td>@product.NameTypeProduct</td>
                    @*  <td>
                         <img src="@produit.UriPhoto" alt="@produit.NomProduit" width="100" />
                     </td> *@
                     <td>
-                        <a class="btn btn-sm btn-warning" href="/edit-produit/@produit.IdProduct">Modifier</a>
+                        <a class="btn btn-sm btn-warning" href="/editproduct/@product.IdProduct">Modifier</a>
                         @* <button class="btn btn-sm btn-danger" @onclick="() => DeleteProduit(produit.IdProduit)">Supprimer</button> *@
                     </td>
                 </tr>

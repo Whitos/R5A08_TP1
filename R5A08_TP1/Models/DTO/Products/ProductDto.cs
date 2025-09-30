@@ -5,7 +5,8 @@
     {
         public int IdProduct { get; set; }
         public string? NameProduct { get; set; }
-        public string? Type { get; set; }
-        public string? Brand { get; set; }
+        public string? Description { get; set; }
+        public string? NameTypeProduct { get; set; }
+        public string? NameBrand { get; set; }
     }
 }

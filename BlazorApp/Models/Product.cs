@@ -8,7 +8,7 @@ namespace BlazorApp.Models
         public string Description { get; set; } = null!;
         public string NamePhoto { get; set; } = null!;
         public string UriPhoto { get; set; } = null!;
-        public int? IdTypeProduct { get; set; } = null!;
-        public int? IdBrand { get; set; } = null!;
+        public string NameTypeProduct { get; set; } = null!;
+        public string NameBrand { get; set; } = null!;
     }
 }

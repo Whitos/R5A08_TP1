@@ -1,0 +1,66 @@
+﻿@page "/editproduct/{id:int}"
+@inject IService<Product> productService
+@inject NavigationManager navManager
+
+<PageTitle>Modifier Produit</PageTitle>
+
+<h3>Modifier un Produit</h3>
+
+@if (product == null)
+{
+    <p><em>Chargement...</em></p>
+}
+else
+{
+    <EditForm Model="product" OnValidSubmit="HandleValidSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="mb-3">
+            <label class="form-label">Nom</label>
+            <InputText class="form-control" @bind-Value="product.NameProduct" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Description</label>
+            <InputText class="form-control" @bind-Value="product.Description" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Marque</label>
+            <InputText class="form-control" @bind-Value="product.NameBrand" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Type de Produit</label>
+            <InputText class="form-control" @bind-Value="product.NameTypeProduct" />
+        </div>
+
+        <button type="submit" class="btn btn-success">Enregistrer</button>
+        <button type="button" class="btn btn-secondary" @onclick="GoBack">Annuler</button>
+    </EditForm>
+}
+
+@code {
+    [Parameter] public int id { get; set; }
+    private Product? product;
+
+    protected override async Task OnInitializedAsync()
+    {
+        product = await productService.GetByIdAsync(id);
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        if (product != null)
+        {
+            await productService.UpdateAsync(product);
+            navManager.NavigateTo("/products");
+        }
+    }
+
+    private void GoBack()
+    {
+        navManager.NavigateTo("/products");
+    }
+}

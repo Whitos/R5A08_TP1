@@ -12,7 +12,12 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ProductsDbContext>();
-builder.Services.AddScoped<IDataRepository<Product>, ProductManager>();  // manager tjrs addscoped jamais addsingleton
+
+// Register all Managers - Pattern Manager uniquement
+builder.Services.AddScoped<IDataRepository<Product>, ProductManager>();
+builder.Services.AddScoped<IDataRepository<Brand>, BrandManager>();
+builder.Services.AddScoped<IDataRepository<TypeProduct>, TypeProductManager>();
+
 builder.Services.AddAutoMapper(typeof(MapperProfile).Assembly);
 builder.Services.AddCors(options =>
 {

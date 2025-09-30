@@ -14,27 +14,57 @@ namespace R5A08_TP1.Models.DataManager
             dbContext = context;
         }
 
+        // GET all
         public async Task<ActionResult<IEnumerable<Product>>> GetAllAsync()
         {
-            return await dbContext.Products.ToListAsync();
+            var products = await dbContext.Products
+                .Include(p => p.RelatedBrand)
+                .Include(p => p.RelatedTypeProduct)
+                .ToListAsync();
+            
+            return new ActionResult<IEnumerable<Product>>(products);
         }
 
-        public async Task<ActionResult<Product?>> GetByIdAsync(int id)
+        // GET by ID
+        public async Task<ActionResult<Product>> GetByIdAsync(int id)
         {
-            return await dbContext.Products.FindAsync(id);
+            var product = await dbContext.Products
+                .Include(p => p.RelatedBrand)
+                .Include(p => p.RelatedTypeProduct)
+                .FirstOrDefaultAsync(p => p.IdProduct == id);
+            
+            if (product == null)
+            {
+                return new NotFoundResult();
+            }
+            
+            return new ActionResult<Product>(product);
         }
 
-        public async Task<ActionResult<Product?>> GetByStringAsync(string str)
+        // GET by string (e.g., NameProduct)
+        public async Task<ActionResult<Product>> GetByStringAsync(string str)
         {
-            return await dbContext.Products.FirstOrDefaultAsync(p => p.NameProduct == str);
+            var product = await dbContext.Products
+                .Include(p => p.RelatedBrand)
+                .Include(p => p.RelatedTypeProduct)
+                .FirstOrDefaultAsync(p => p.NameProduct == str);
+            
+            if (product == null)
+            {
+                return new NotFoundResult();
+            }
+            
+            return new ActionResult<Product>(product);
         }
 
+        // POST
         public async Task AddAsync(Product entity)
         {
             await dbContext.Products.AddAsync(entity);
             await dbContext.SaveChangesAsync();
         }
 
+        // PUT
         public async Task UpdateAsync(Product entityToUpdate, Product entity)
         {
             dbContext.Products.Attach(entityToUpdate);
@@ -43,6 +73,7 @@ namespace R5A08_TP1.Models.DataManager
             await dbContext.SaveChangesAsync();
         }
 
+        // DELETE
         public async Task DeleteAsync(Product entity)
         {
             dbContext.Products.Remove(entity);
