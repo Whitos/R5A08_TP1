@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using R5A08_TP1.Models.DTO.Commun;
 using R5A08_TP1.Models.DTO.Products;
 using R5A08_TP1.Models.EntityFramework;
 
@@ -40,6 +41,10 @@ namespace R5A08_TP1.Models.Mapping
             // ProductUpdateDto -> Product (PUT)
             CreateMap<ProductUpdateDto, Product>()
                 .ForMember(d => d.IdProduct, m => m.Ignore()); // ID géré par l’URL
+
+
+            CreateMap<Brand, BrandDto>().ReverseMap();
+            CreateMap<TypeProduct, TypeProductDto>().ReverseMap();
         }
     }
 }
