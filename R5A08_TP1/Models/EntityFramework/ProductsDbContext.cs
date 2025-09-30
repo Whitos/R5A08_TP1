@@ -71,7 +71,10 @@ public partial class ProductsDbContext : DbContext
                 NamePhoto = "iphone15.jpg",
                 UriPhoto = "/img/iphone15.jpg",
                 IdTypeProduct = 1,
-                IdBrand = 1
+                IdBrand = 1,
+                ActualStock = 10,
+                MinStock = 5,
+                MaxStock = 50
             },
             new Product
             {
@@ -81,7 +84,10 @@ public partial class ProductsDbContext : DbContext
                 NamePhoto = "galaxyS24.jpg",
                 UriPhoto = "/img/galaxyS24.jpg",
                 IdTypeProduct = 1,
-                IdBrand = 2
+                IdBrand = 2,
+                ActualStock = 15,
+                MinStock = 5,
+                MaxStock = 50
             }
         );
 

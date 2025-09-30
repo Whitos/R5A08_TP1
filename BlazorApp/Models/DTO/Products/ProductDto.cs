@@ -1,6 +1,5 @@
-﻿namespace R5A08_TP1.Models.DTO.Products
+﻿namespace BlazorApp.Models.DTO.Products
 {
-    // GET /products
     public class ProductDto
     {
         public int IdProduct { get; set; }

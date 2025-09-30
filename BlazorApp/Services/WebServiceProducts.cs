@@ -3,7 +3,7 @@ using System.Net.Http.Json;
 
 namespace BlazorApp.Services
 {
-    public class WebService : IService<Product>
+    public class WebServiceProducts : IService<Product>
     {
         private readonly HttpClient httpClient = new()
         {

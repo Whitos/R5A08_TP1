@@ -46,5 +46,17 @@ namespace R5A08_TP1.Models.EntityFramework
         [InverseProperty(nameof(Brand.RelatedProductsBrands))]
         public virtual Brand? RelatedBrand { get; set; } = null!;
 
+        private bool Equals(Product other)
+        {
+            return NameProduct == other.NameProduct;
+        }
+
+        public override bool Equals(object? obj)
+        {
+            if (obj is null) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != GetType()) return false;
+            return Equals((Product)obj);
+        }
     }
 }

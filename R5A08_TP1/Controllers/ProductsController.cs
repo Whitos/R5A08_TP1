@@ -15,7 +15,7 @@ namespace R5A08_TP1.Controllers
 {
     [Route("api/products")]
     [ApiController]
-    public class ProductsController : Controller
+    public class ProductsController : ControllerBase
     {
         private readonly IDataRepository<Product> dataRepository;
         private readonly IMapper _mapper;
