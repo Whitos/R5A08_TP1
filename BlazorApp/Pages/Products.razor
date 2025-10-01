@@ -1,5 +1,6 @@
 ﻿@page "/products"
-@inject IService<Product> productService
+@inject IProductService productService
+@inject IJSRuntime JSRuntime
  
 <PageTitle>Produits</PageTitle>
 
@@ -38,8 +39,8 @@ else
                         <img src="@produit.UriPhoto" alt="@produit.NomProduit" width="100" />
                     </td> *@
                     <td>
-                        <a class="btn btn-sm btn-warning" href="/editproduct/@product.IdProduct">Modifier</a>
-                        @* <button class="btn btn-sm btn-danger" @onclick="() => DeleteProduit(produit.IdProduit)">Supprimer</button> *@
+                        <a class="btn btn-sm btn-warning" href="/edit-product/@product.IdProduct">Modifier</a>
+                        <button class="btn btn-sm btn-danger" @onclick="() => DeleteProduct(product.IdProduct)">Supprimer</button>
                     </td>
                 </tr>
             }
@@ -48,10 +49,21 @@ else
 }
 
 @code {
-    private List<Product>? products;
+    private List<ProductDto>? products;
 
     protected override async Task OnInitializedAsync()
     {
         products = await productService.GetAllAsync();
+    }
+
+    private async Task DeleteProduct(int id)
+    {
+        var confirm = await JSRuntime.InvokeAsync<bool>("confirm", $"Êtes-vous sûr de vouloir supprimer le produit avec l'ID {id} ?");
+        if (confirm)
+        {
+            await productService.DeleteAsync(id);
+            products = await productService.GetAllAsync();
+            StateHasChanged();
+        }
     }
 }

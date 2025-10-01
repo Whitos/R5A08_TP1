@@ -9,6 +9,8 @@
         public string? UriPhoto { get; set; }
         public int Stock { get; set; }
         public bool EnReappro { get; set; }
+        public int IdBrand { get; set; }
+        public int IdType { get; set; }
         public string? Brand { get; set; }
         public string? Type { get; set; }
     }

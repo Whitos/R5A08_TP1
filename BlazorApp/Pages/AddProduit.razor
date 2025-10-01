@@ -1,5 +1,5 @@
 ﻿@page "/add-product"
-@inject IService<Product> productService
+@inject IProductService productService
 @inject NavigationManager navManager
 
 <h3>Ajouter un produit</h3>
@@ -9,15 +9,30 @@
     <ValidationSummary />
 
     <div class="mb-3">
-        <label for="Nom">Nom</label>
-        <InputText id="Nom" class="form-control" @bind-Value="product.NameProduct" />
+        <label>Nom</label>
+        <InputText class="form-control" @bind-Value="product.NameProduct" />
+    </div>
+
+    <div class="mb-3">
+        <label>Description</label>
+        <InputText class="form-control" @bind-Value="product.Description" />
+    </div>
+
+    <div class="mb-3">
+        <label>Id Marque</label>
+        <InputNumber class="form-control" @bind-Value="product.IdBrand" />
+    </div>
+
+    <div class="mb-3">
+        <label>Id Type Produit</label>
+        <InputNumber class="form-control" @bind-Value="product.IdTypeProduct" />
     </div>
 
     <button type="submit" class="btn btn-primary">Ajouter</button>
 </EditForm>
 
 @code {
-    private Product product = new Product();
+    private ProductCreateDto product = new();
 
     private async Task HandleValidSubmit()
     {

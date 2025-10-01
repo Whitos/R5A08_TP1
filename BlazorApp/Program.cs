@@ -13,7 +13,8 @@ namespace BlazorApp
             builder.RootComponents.Add<App>("#app");
             builder.RootComponents.Add<HeadOutlet>("head::after");
 
-            builder.Services.AddScoped<IService<Product>, WebServiceProducts>(_ => new WebServiceProducts());
+            builder.Services.AddScoped<IProductService, WebServiceProducts>();
+
 
             await builder.Build().RunAsync();
         }

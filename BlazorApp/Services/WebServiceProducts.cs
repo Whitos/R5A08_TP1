@@ -1,18 +1,40 @@
 ﻿using BlazorApp.Models;
+using BlazorApp.Models.DTO.Products;
 using System.Net.Http.Json;
 
 namespace BlazorApp.Services
 {
-    public class WebServiceProducts : IService<Product>
+    public class WebServiceProducts : IProductService
     {
         private readonly HttpClient httpClient = new()
         {
             BaseAddress = new Uri("https://localhost:7234/api/")
         };
-
-        public async Task AddAsync(Product product)
+        public async Task<List<ProductDto>?> GetAllAsync()
         {
-            await httpClient.PostAsJsonAsync<Product>("products", product);
+            return await httpClient.GetFromJsonAsync<List<ProductDto>?>("products");
+        }
+
+        public async Task<ProductDetailDto?> GetByIdAsync(int id)
+        {
+            return await httpClient.GetFromJsonAsync<ProductDetailDto?>($"products/{id}");
+        }
+
+        //public async Task<Product?> GetByNameAsync(string name)
+        //{
+        //    var response = await httpClient.PostAsJsonAsync("products/search", name);
+        //    response.EnsureSuccessStatusCode();
+
+        //    return await response.Content.ReadFromJsonAsync<Product>();
+        //}
+
+        public async Task AddAsync(ProductCreateDto productDto)
+        {
+            await httpClient.PostAsJsonAsync("products", productDto);
+        }
+        public async Task UpdateAsync(ProductUpdateDto updatedEntity)
+        {
+            await httpClient.PutAsJsonAsync($"products/{updatedEntity.IdProduct}", updatedEntity);
         }
 
         public async Task DeleteAsync(int id)
@@ -20,27 +42,6 @@ namespace BlazorApp.Services
             await httpClient.DeleteAsync($"products/{id}");
         }
 
-        public async Task<List<Product>?> GetAllAsync()
-        {
-            return await httpClient.GetFromJsonAsync<List<Product>?>("products");
-        }
 
-        public async Task<Product?> GetByIdAsync(int id)
-        {
-            return await httpClient.GetFromJsonAsync<Product?>($"products/{id}");
-        }
-
-        public async Task<Product?> GetByNameAsync(string name)
-        {
-            var response = await httpClient.PostAsJsonAsync("products/search", name);
-            response.EnsureSuccessStatusCode();
-
-            return await response.Content.ReadFromJsonAsync<Product>();
-        }
-
-        public async Task UpdateAsync(Product updatedEntity)
-        {
-            await httpClient.PutAsJsonAsync<Product>($"products/{updatedEntity.IdProduct}", updatedEntity);
-        }
     }
 }

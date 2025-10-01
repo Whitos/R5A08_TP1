@@ -90,12 +90,11 @@ namespace R5A08_TP1.Controllers
                 return NotFound();
             }
 
-            // Mapper le DTO vers l'entité
             var productToUpdate = _mapper.Map<Product>(productDto);
             productToUpdate.IdProduct = id; // S'assurer que l'ID est correct
 
             await dataRepository.UpdateAsync(existingProductResult.Value, productToUpdate);
-            return NoContent();
+            return Ok(_mapper.Map<ProductDetailDto>(productToUpdate));
         }
     }
 }

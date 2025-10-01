@@ -1,5 +1,5 @@
-﻿@page "/editproduct/{id:int}"
-@inject IService<Product> productService
+﻿@page "/edit-product/{id:int}"
+@inject IProductService productService
 @inject NavigationManager navManager
 
 <PageTitle>Modifier Produit</PageTitle>
@@ -28,12 +28,12 @@ else
 
         <div class="mb-3">
             <label class="form-label">Marque</label>
-            <InputText class="form-control" @bind-Value="product.NameBrand" />
+            <InputNumber class="form-control" @bind-Value="product.IdBrand"/>
         </div>
 
         <div class="mb-3">
             <label class="form-label">Type de Produit</label>
-            <InputText class="form-control" @bind-Value="product.NameTypeProduct" />
+            <InputNumber class="form-control" @bind-Value="product.IdTypeProduct"/>
         </div>
 
         <button type="submit" class="btn btn-success">Enregistrer</button>
@@ -43,11 +43,23 @@ else
 
 @code {
     [Parameter] public int id { get; set; }
-    private Product? product;
+    private ProductUpdateDto? product;
 
     protected override async Task OnInitializedAsync()
     {
-        product = await productService.GetByIdAsync(id);
+        var detail = await productService.GetByIdAsync(id);
+
+        if (detail != null)
+        {
+            product = new ProductUpdateDto
+            {
+                IdProduct = detail.IdProduct,
+                NameProduct = detail.NameProduct,
+                Description = detail.Description,
+                IdBrand = detail.IdProduct,
+                IdTypeProduct = detail.IdProduct,
+            };
+        }
     }
 
     private async Task HandleValidSubmit()
