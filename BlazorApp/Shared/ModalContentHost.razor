@@ -1,0 +1,6 @@
+@* Simple placeholder component used as a generic parameter for Modal.ShowAsync<T>. *@
+<RenderFragment>@ChildContent</RenderFragment>
+
+@code {
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+}

@@ -1,5 +1,8 @@
 ﻿@page "/add-product"
+
 @inject IProductService productService
+@inject IBrandService brandService
+@inject ITypeProductService typeProductService
 @inject NavigationManager navManager
 
 <h3>Ajouter un produit</h3>
@@ -19,24 +22,82 @@
     </div>
 
     <div class="mb-3">
-        <label>Id Marque</label>
-        <InputNumber class="form-control" @bind-Value="product.IdBrand" />
+        <label>Nom Photo</label>
+        <InputText class="form-control" @bind-Value="product.NamePhoto" />
     </div>
 
     <div class="mb-3">
-        <label>Id Type Produit</label>
-        <InputNumber class="form-control" @bind-Value="product.IdTypeProduct" />
+        <label>Uri Photo</label>
+        <InputText class="form-control" @bind-Value="product.UriPhoto" />
+    </div>
+    
+
+    <div class="mb-3">
+        <label class="form-label">Marque</label>
+        <InputSelect class="form-control" @bind-Value="product.IdBrand">
+            <option value="">-- Sélectionner une marque --</option>
+            @if (brands != null)
+            {
+                @foreach (var b in brands)
+                {
+                    <option value="@b.IdBrand">@b.NameBrand</option>
+                }
+            }
+        </InputSelect>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Type de Produit</label>
+        <InputSelect class="form-control" @bind-Value="product.IdTypeProduct">
+            <option value="">-- Sélectionner un type --</option>
+            @if (types != null)
+            {
+                @foreach (var t in types)
+                {
+                    <option value="@t.IdTypeProduct">@t.NameTypeProduct</option>
+                }
+            }
+        </InputSelect>
+    </div>
+
+    <div class="mb-3">
+        <label>Stock actuel</label>
+        <InputNumber class="form-control" @bind-Value="product.ActualStock" />
+    </div>
+
+    <div class="mb-3">
+        <label>Stock minimum</label>
+        <InputNumber class="form-control" @bind-Value="product.MinStock" />
+    </div>
+
+    <div class="mb-3">
+        <label>Stock maximum</label>
+        <InputNumber class="form-control" @bind-Value="product.MaxStock" />
     </div>
 
     <button type="submit" class="btn btn-primary">Ajouter</button>
+    <button type="button" class="btn btn-secondary" @onclick="GoBack">Annuler</button>
 </EditForm>
 
 @code {
     private ProductCreateDto product = new();
+    private List<BrandDto>? brands;
+    private List<TypeProductDto>? types;
+
+    protected override async Task OnInitializedAsync()
+    {
+        brands = await brandService.GetAllAsync();
+        types = await typeProductService.GetAllAsync();
+    }
 
     private async Task HandleValidSubmit()
     {
         await productService.AddAsync(product);
+        navManager.NavigateTo("/products");
+    }
+
+    private void GoBack()
+    {
         navManager.NavigateTo("/products");
     }
 }

@@ -7,7 +7,7 @@ using R5A08_TP1.Models.Repository;
 
 namespace R5A08_TP1.Controllers
 {
-    [Route("api/typeproduct")]
+    [Route("api/type-products")]
     [ApiController]
     public class TypeProductController : ControllerBase
     {

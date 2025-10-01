@@ -12,7 +12,7 @@ namespace BlazorApp.Services
 
         public async Task<List<TypeProductDto>?> GetAllAsync()
         {
-            return await httpClient.GetFromJsonAsync<List<TypeProductDto>?>("typeproducts");
+            return await httpClient.GetFromJsonAsync<List<TypeProductDto>?>("type-products");
         }
     }
 }

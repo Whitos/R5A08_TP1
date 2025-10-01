@@ -1,69 +1,258 @@
 ﻿@page "/products"
+@using BlazorApp.Shared
+
 @inject IProductService productService
-@inject IJSRuntime JSRuntime
- 
+@inject IBrandService brandService
+@inject ITypeProductService typeProductService
+@inject ToastService ToastService
+
 <PageTitle>Produits</PageTitle>
 
-<h1>Liste des produits</h1>
+<h3 class="mb-4 fw-bold">
+    Catalogue Produits
+    <span class="badge bg-secondary ms-2">@((FilteredProducts?.Count() ?? 0))</span>
+</h3>
 
-@if (products == null)
+<!-- 🔎 Barre de filtres -->
+<div class="row g-2 align-items-center mb-4">
+    <div class="col-12 col-md-4">
+        <InputText @bind-Value="searchTerm" class="form-control" placeholder="Rechercher un produit..." />
+    </div>
+
+    <div class="col-6 col-md-3">
+        <InputSelect @bind-Value="selectedBrand" class="form-select">
+            <option value="">Marque (toutes)</option>
+            @if (brandOptions is not null)
+            {
+                @foreach (var b in brandOptions)
+                {
+                    <option value="@b">@b</option>
+                }
+            }
+        </InputSelect>
+    </div>
+
+    <div class="col-6 col-md-3">
+        <InputSelect @bind-Value="selectedType" class="form-select">
+            <option value="">Type (tous)</option>
+            @if (typeOptions is not null)
+            {
+                @foreach (var t in typeOptions)
+                {
+                    <option value="@t">@t</option>
+                }
+            }
+        </InputSelect>
+    </div>
+
+    <div class="col-12 col-md-2 d-flex gap-2 justify-content-md-end">
+        <Button Color="ButtonColor.Secondary" Size="ButtonSize.Small" OnClick="ResetFilters">
+            Réinitialiser
+        </Button>
+        <a class="btn btn-sm btn-primary" href="/add-product">
+            + Ajouter
+        </a>
+    </div>
+</div>
+
+@if (products is null)
 {
-    <p><em>Chargement...</em></p>
+    <div class="d-flex justify-content-center mt-5">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Chargement...</span>
+        </div>
+    </div>
 }
-else if (!products.Any())
+else if (!FilteredProducts.Any())
 {
-    <p><em>Aucun produit trouvé.</em></p>
+    <p class="text-muted">Aucun produit trouvé.</p>
 }
 else
 {
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Nom</th>
-                <th>Description</th>
-                <th>Marque</th>
-                <th>Type de Produit</th>
-@*                 <th>Photo</th> *@
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var product in products)
-            {
-                <tr>
-                    <td>@product.NameProduct</td>
-                    <td>@product.Description</td>
-                    <td>@product.NameBrand</td>
-                    <td>@product.NameTypeProduct</td>
-                   @*  <td>
-                        <img src="@produit.UriPhoto" alt="@produit.NomProduit" width="100" />
-                    </td> *@
-                    <td>
-                        <a class="btn btn-sm btn-warning" href="/edit-product/@product.IdProduct">Modifier</a>
-                        <button class="btn btn-sm btn-danger" @onclick="() => DeleteProduct(product.IdProduct)">Supprimer</button>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+    <!-- ✅ Cards modernes -->
+    <div class="row g-4">
+        @foreach (var product in FilteredProducts)
+        {
+            <div class="col-12 col-sm-6 col-lg-4">
+                <div class="card shadow-sm border-0 h-100 hover-zoom"
+                     style="cursor:pointer"
+                     @onclick="() => OpenDetails(product)">
+
+                    @if (!string.IsNullOrWhiteSpace(product.UriPhoto))
+                    {
+                        <img src="@product.UriPhoto" alt="@product.NameProduct"
+                             class="card-img-top"
+                             style="height:220px; object-fit:cover; border-radius:8px 8px 0 0;" />
+                    }
+                    else
+                    {
+                        <div class="d-flex justify-content-center align-items-center bg-light"
+                             style="height:220px; border-radius:8px 8px 0 0;">
+                            <i class="bi bi-image text-muted" style="font-size:2rem;"></i>
+                        </div>
+                    }
+
+                    <div class="card-body">
+                        <h5 class="card-title fw-semibold">@product.NameProduct</h5>
+                        <p class="card-text text-muted small">@product.Description</p>
+                        <div>
+                            <span class="badge bg-primary">@product.NameBrand</span>
+                            <span class="badge bg-info">@product.NameTypeProduct</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
 }
+
+<!-- Overlay fullscreen -->
+@if (selectedProduct is not null)
+{
+    <div class="product-overlay">
+        <div class="overlay-content shadow-lg rounded bg-white p-4">
+            <button class="btn-close ms-auto d-block mb-3" @onclick="CloseDetails"></button>
+
+            @if (!string.IsNullOrWhiteSpace(selectedProduct.UriPhoto))
+            {
+                <img src="@selectedProduct.UriPhoto" alt="@selectedProduct.NameProduct"
+                     class="img-fluid mb-3 rounded"
+                     style="max-height:400px; object-fit:contain;" />
+            }
+
+            <h4>@selectedProduct.NameProduct</h4>
+            <p class="text-muted">@selectedProduct.Description</p>
+
+            <!-- Stock -->
+            <p class="text-muted">
+                @selectedProduct.ActualStock articles en stock
+                @if (int.TryParse(selectedProduct.ActualStock, out var stock) && stock < 10)
+                {
+                    <span class="badge bg-warning text-dark ms-2">
+                        ⚠️ En réapprovisionnement bientôt
+                    </span>
+                }
+            </p>
+
+            <div class="mb-3">
+                <span class="badge bg-primary">@selectedProduct.NameBrand</span>
+                <span class="badge bg-info">@selectedProduct.NameTypeProduct</span>
+            </div>
+
+            <div class="d-flex gap-2 justify-content-end mt-3">
+                <a class="btn btn-outline-primary d-flex align-items-center gap-2" href="/edit-product/@selectedProduct.IdProduct">
+                    <i class="bi bi-pencil-square"></i> Modifier
+                </a>
+                <button class="btn btn-outline-danger d-flex align-items-center gap-2" @onclick="() => ConfirmDelete(selectedProduct)">
+                    <i class="bi bi-trash3"></i> Supprimer
+                </button>
+            </div>
+        </div>
+    </div>
+}
+
+<Toasts />
 
 @code {
     private List<ProductDto>? products;
+    private IEnumerable<string>? brandOptions;
+    private IEnumerable<string>? typeOptions;
+
+    private string? searchTerm;
+    private string? selectedBrand;
+    private string? selectedType;
+
+    private ProductDto? productToDelete;
+    private ProductDto? selectedProduct;
+
+    private IEnumerable<ProductDto> FilteredProducts =>
+        (products ?? Enumerable.Empty<ProductDto>())
+        .Where(p =>
+            (string.IsNullOrWhiteSpace(searchTerm)
+                || (!string.IsNullOrWhiteSpace(p.NameProduct) && p.NameProduct.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
+                || (!string.IsNullOrWhiteSpace(p.Description) && p.Description.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)))
+            && (string.IsNullOrWhiteSpace(selectedBrand) || p.NameBrand == selectedBrand)
+            && (string.IsNullOrWhiteSpace(selectedType) || p.NameTypeProduct == selectedType)
+        );
 
     protected override async Task OnInitializedAsync()
     {
         products = await productService.GetAllAsync();
+        var brands = await brandService.GetAllAsync();
+        var types = await typeProductService.GetAllAsync();
+
+        brandOptions = brands.Select(b => b.NameBrand).Where(n => !string.IsNullOrWhiteSpace(n)).Distinct().OrderBy(n => n);
+        typeOptions = types.Select(t => t.NameTypeProduct).Where(n => !string.IsNullOrWhiteSpace(n)).Distinct().OrderBy(n => n);
     }
 
-    private async Task DeleteProduct(int id)
+    private void ResetFilters() => searchTerm = selectedBrand = selectedType = null;
+
+    private void OpenDetails(ProductDto p) => selectedProduct = p;
+
+    private void CloseDetails() => selectedProduct = null;
+
+    private async Task ConfirmDelete(ProductDto product)
     {
-        var confirm = await JSRuntime.InvokeAsync<bool>("confirm", $"Êtes-vous sûr de vouloir supprimer le produit avec l'ID {id} ?");
-        if (confirm)
+        productToDelete = product;
+        await DeleteConfirmed();
+    }
+
+    private async Task DeleteConfirmed()
+    {
+        if (productToDelete is null) return;
+
+        try
         {
-            await productService.DeleteAsync(id);
+            await productService.DeleteAsync(productToDelete.IdProduct);
             products = await productService.GetAllAsync();
-            StateHasChanged();
+            selectedProduct = null;
+            ToastService.Notify(new(ToastType.Success, $"✅ {productToDelete.NameProduct} supprimé avec succès"));
+        }
+        catch
+        {
+            ToastService.Notify(new(ToastType.Danger, $"❌ Erreur lors de la suppression de {productToDelete.NameProduct}"));
         }
     }
 }
+
+<style>
+    .product-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0,0,0,0.6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1050;
+    }
+
+    .overlay-content {
+        max-width: 700px;
+        width: 90%;
+        background: white;
+        animation: zoomIn .3s ease;
+    }
+    @@keyframes zoomIn {
+        from
+
+    {
+        transform: scale(0.9);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    }
+
+    .hover-zoom:hover {
+        transform: translateY(-4px);
+        transition: transform 0.2s ease;
+    }
+</style>
+

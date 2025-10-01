@@ -1,5 +1,8 @@
 ﻿@page "/edit-product/{id:int}"
+
 @inject IProductService productService
+@inject IBrandService brandService
+@inject ITypeProductService typeProductService
 @inject NavigationManager navManager
 
 <PageTitle>Modifier Produit</PageTitle>
@@ -28,12 +31,55 @@ else
 
         <div class="mb-3">
             <label class="form-label">Marque</label>
-            <InputNumber class="form-control" @bind-Value="product.IdBrand"/>
+            <InputSelect class="form-control" @bind-Value="product.IdBrand">
+                <option value="">-- Sélectionner une marque --</option>
+                @if (brands != null)
+                {
+                    @foreach (var b in brands)
+                    {
+                        <option value="@b.IdBrand">@b.NameBrand</option>
+                    }
+                }
+            </InputSelect>
         </div>
 
         <div class="mb-3">
             <label class="form-label">Type de Produit</label>
-            <InputNumber class="form-control" @bind-Value="product.IdTypeProduct"/>
+            <InputSelect class="form-control" @bind-Value="product.IdTypeProduct">
+                <option value="">-- Sélectionner un type --</option>
+                @if (types != null)
+                {
+                    @foreach (var t in types)
+                    {
+                        <option value="@t.IdTypeProduct">@t.NameTypeProduct</option>
+                    }
+                }
+            </InputSelect>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Nom fichier photo</label>
+            <InputText class="form-control" @bind-Value="product.NamePhoto" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Lien (URI) photo</label>
+            <InputText class="form-control" @bind-Value="product.UriPhoto" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Stock actuel</label>
+            <InputNumber class="form-control" @bind-Value="product.ActualStock" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Stock minimum</label>
+            <InputNumber class="form-control" @bind-Value="product.MinStock" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Stock maximum</label>
+            <InputNumber class="form-control" @bind-Value="product.MaxStock" />
         </div>
 
         <button type="submit" class="btn btn-success">Enregistrer</button>
@@ -43,6 +89,8 @@ else
 
 @code {
     [Parameter] public int id { get; set; }
+    private List<BrandDto>? brands;
+    private List<TypeProductDto>? types;
     private ProductUpdateDto? product;
 
     protected override async Task OnInitializedAsync()
@@ -56,10 +104,18 @@ else
                 IdProduct = detail.IdProduct,
                 NameProduct = detail.NameProduct,
                 Description = detail.Description,
-                IdBrand = detail.IdProduct,
-                IdTypeProduct = detail.IdProduct,
+                NamePhoto = detail.NamePhoto,
+                UriPhoto = detail.UriPhoto,
+                IdBrand = detail.IdBrand,              
+                IdTypeProduct = detail.IdTypeProduct,  
+                ActualStock = detail.ActualStock,
+                MinStock = detail.MinStock,
+                MaxStock = detail.MaxStock
             };
         }
+
+        brands = await brandService.GetAllAsync();
+        types = await typeProductService.GetAllAsync();
     }
 
     private async Task HandleValidSubmit()
@@ -68,6 +124,7 @@ else
         {
             await productService.UpdateAsync(product);
             navManager.NavigateTo("/products");
+
         }
     }
 

@@ -18,7 +18,7 @@ namespace R5A08_TP1.Models.EntityFramework
         public string Description { get; set; }
 
         [Column("name_photo")]
-        public string NamePhoto { get; set; }
+        public string? NamePhoto { get; set; }
 
         [Column("uri_photo")]
         public string? UriPhoto { get; set; }

@@ -4,7 +4,7 @@ using System.Net.Http.Json;
 
 namespace BlazorApp.Services
 {
-    public class BrandService : IBrandService
+    public class WebServiceBrand : IBrandService
     {
         private readonly HttpClient httpClient = new()
         {
