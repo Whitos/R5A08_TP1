@@ -1,5 +1,4 @@
-﻿using BlazorApp.Models;
-using BlazorApp.Models.DTO.Commun;
+﻿using R5A08_TP1.Shared.DTO.Commun;
 using System.Net.Http.Json;
 
 namespace BlazorApp.Services
@@ -14,6 +13,11 @@ namespace BlazorApp.Services
         public async Task<List<BrandDto>?> GetAllAsync()
         {
             return await httpClient.GetFromJsonAsync<List<BrandDto>?>("brands");
+        }
+
+        public async Task AddAsync(BrandCreateDto dto)
+        {
+            await httpClient.PostAsJsonAsync("brands", dto);
         }
 
     }

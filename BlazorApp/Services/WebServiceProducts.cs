@@ -1,5 +1,4 @@
-﻿using BlazorApp.Models;
-using BlazorApp.Models.DTO.Products;
+﻿using R5A08_TP1.Shared.DTO.Products;
 using System.Net.Http.Json;
 
 namespace BlazorApp.Services

@@ -1,297 +1,137 @@
-﻿//using Microsoft.AspNetCore.Mvc;
-//using Microsoft.EntityFrameworkCore.Infrastructure;
-//using Microsoft.VisualStudio.TestTools.UnitTesting;
-//using Moq;
-//using R5A08_TP1.Controllers;
-//using R5A08_TP1.Models.DataManager;
-//using R5A08_TP1.Models.EntityFramework;
-//using R5A08_TP1.Models.Repository;
-//using System;
-//using System.Collections.Generic;
-//using System.Linq;
-//using System.Text;
-//using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
+using R5A08_TP1.Controllers;
+using R5A08_TP1.Models.EntityFramework;
+using R5A08_TP1.Models.Repository;
+using R5A08_TP1.Shared.DTO.Products;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
-//namespace R5A08_TP1.Controllers.Tests
-//{
-//    [TestClass()]
-//    [TestCategory("mock")]
-//    public class ProduitsControllerMockTests
-//    {
-//        private readonly ProductsDbContext _context;
-//        private readonly ProductsController _productController;
-//        private Mock<IDataRepository<Product>> _dataRepository;
+namespace R5A08_TP1Tests.Controllers
+{
+    [TestClass]
+    [TestCategory("mock")]
+    public class ProductsControllerMockTests
+    {
+        private readonly ProductsController _controller;
+        private readonly Mock<IDataRepository<Product>> _repositoryMock;
+        private readonly Mock<AutoMapper.IMapper> _mapperMock;
 
-//        public ProduitsControllerMockTests()
-//        {
-//            _dataRepository = new Mock<IDataRepository<Product>>();
-//            _productController = new ProductsController(_dataRepository.Object);
+        public ProductsControllerMockTests()
+        {
+            _repositoryMock = new Mock<IDataRepository<Product>>();
+            _mapperMock = new Mock<AutoMapper.IMapper>();
+            _controller = new ProductsController(_repositoryMock.Object, _mapperMock.Object);
+        }
 
-//        }
+        [TestMethod]
+        public async Task ShouldGetAllProducts()
+        {
+            var products = new List<Product> { new() { IdProduct = 1, NameProduct = "Chaise" } };
+            var dtos = new List<ProductDto> { new() { IdProduct = 1, NameProduct = "Chaise" } };
 
+            _repositoryMock.Setup(r => r.GetAllAsync()).ReturnsAsync(new ActionResult<IEnumerable<Product>>(products));
+            _mapperMock.Setup(m => m.Map<IEnumerable<ProductDto>>(products)).Returns(dtos);
 
-//        [TestMethod]
-//        public void ShouldGetProduct()
-//        {
-//            // Given : Un produit en enregistré
-//            Product productInDb = new()
-//            {
-//                IdProduct = 30,
-//                NameProduct = "Chaise",
-//                Description = "Une superbe chaise",
-//                NamePhoto = "Une superbe chaise bleu",
-//                UriPhoto = "https://ikea.fr/chaise.jpg"
-//            };
+            var result = await _controller.GetAll();
 
-//            _dataRepository
-//                .Setup(manager => manager.GetByIdAsync(productInDb.IdProduct))
-//                .ReturnsAsync(productInDb);
+            Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
+            var ok = result.Result as OkObjectResult;
+            Assert.AreEqual(dtos, ok.Value);
+        }
 
-//            // When : On appelle la méthode GET de l'API pour récupérer le produit
-//            ActionResult<Product> action = _productController.Get(productInDb.IdProduct).GetAwaiter().GetResult();
+        [TestMethod]
+        public async Task ShouldGetProduct()
+        {
+            var entity = new Product { IdProduct = 1, NameProduct = "Chaise" };
+            var dto = new ProductDetailDto { IdProduct = 1, NameProduct = "Chaise" };
 
-//            // Then : On récupère le produit et le code de retour est 200
-//            _dataRepository.Verify(manager => manager.GetByIdAsync(productInDb.IdProduct), Times.Once);
+            _repositoryMock.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(entity);
+            _mapperMock.Setup(m => m.Map<ProductDetailDto>(entity)).Returns(dto);
 
-//            Assert.IsNotNull(action);
-//            Assert.IsInstanceOfType(action.Value, typeof(Product));
+            var result = await _controller.Get(1);
 
-//            Product returnProduct = action.Value;
-//            Assert.AreEqual(productInDb, returnProduct);
-//        }
+            Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
+            var ok = result.Result as OkObjectResult;
+            Assert.AreEqual(dto, ok.Value);
+        }
 
-//        [TestMethod]
-//        public void ShouldDeleteProduct()
-//        {
-//            // Given : Un produit enregistré
-//            Product produitInDb = new()
-//            {
-//                IdProduct = 20,
-//                NameProduct = "Chaise",
-//                Description = "Une superbe chaise",
-//                NamePhoto = "Une superbe chaise bleu",
-//                UriPhoto = "https://ikea.fr/chaise.jpg"
-//            };
+        [TestMethod]
+        public async Task GetProductShouldReturnNotFound()
+        {
+            _repositoryMock.Setup(r => r.GetByIdAsync(42)).ReturnsAsync((Product)null);
 
-//            _dataRepository
-//                .Setup(manager => manager.GetByIdAsync(produitInDb.IdProduct))
-//                .ReturnsAsync(produitInDb);
+            var result = await _controller.Get(42);
 
-//            _dataRepository
-//                .Setup(manager => manager.DeleteAsync(produitInDb));
+            Assert.IsInstanceOfType(result.Result, typeof(NotFoundResult));
+        }
 
-//            // When : On souhaite supprimer un produit depuis l'API
-//            IActionResult action = _productController.Delete(produitInDb.IdProduct).GetAwaiter().GetResult();
+        [TestMethod]
+        public async Task ShouldCreateProduct()
+        {
+            var createDto = new ProductCreateDto { NameProduct = "NewProduct" };
+            var entity = new Product { IdProduct = 1, NameProduct = "NewProduct" };
 
-//            // Then : Le produit a bien été supprimé et le code HTTP est NO_CONTENT (204)
-//            Assert.IsNotNull(action);
-//            Assert.IsInstanceOfType(action, typeof(NoContentResult));
+            _mapperMock.Setup(m => m.Map<Product>(createDto)).Returns(entity);
+            _repositoryMock.Setup(r => r.AddAsync(entity)).Returns(Task.CompletedTask);
+            _mapperMock.Setup(m => m.Map<ProductCreateDto>(entity)).Returns(createDto);
 
-//            _dataRepository.Verify(manager => manager.GetByIdAsync(produitInDb.IdProduct), Times.Once);
-//            _dataRepository.Verify(manager => manager.DeleteAsync(produitInDb), Times.Once);
-//        }
+            var result = await _controller.Create(createDto);
 
-//        [TestMethod]
-//        public void ShouldNotDeleteProductBecauseProductDoesNotExist()
-//        {
-//            // Given : Un produit enregistré
-//            Product produitInDb = new()
-//            {
-//                IdProduct = 30,
-//                NameProduct = "Chaise",
-//                Description = "Une superbe chaise",
-//                NamePhoto = "Une superbe chaise bleu",
-//                UriPhoto = "https://ikea.fr/chaise.jpg"
-//            };
+            Assert.IsInstanceOfType(result.Result, typeof(CreatedAtActionResult));
+        }
 
-//            _dataRepository
-//                .Setup(manager => manager.GetByIdAsync(produitInDb.IdProduct))
-//                .ReturnsAsync((Product)null);
+        [TestMethod]
+        public async Task ShouldUpdateProduct()
+        {
+            var existing = new Product { IdProduct = 1, NameProduct = "Old" };
+            var updateDto = new ProductUpdateDto { NameProduct = "Updated" };
+            var updatedDetailDto = new ProductDetailDto { IdProduct = 1, NameProduct = "Updated" };
 
-//            // When : On souhaite supprimer un produit depuis l'API
-//            IActionResult action = _productController.Delete(produitInDb.IdProduct).GetAwaiter().GetResult();
+            _repositoryMock.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(existing);
+            _mapperMock.Setup(m => m.Map<Product>(updateDto)).Returns(existing);
+            _mapperMock.Setup(m => m.Map<ProductDetailDto>(existing)).Returns(updatedDetailDto);
 
-//            // Then : Le produit a bien été supprimé et le code HTTP est NO_CONTENT (204)
-//            _dataRepository.Verify(manager => manager.GetByIdAsync(produitInDb.IdProduct), Times.Once);
+            var result = await _controller.Update(1, updateDto);
 
-//            Assert.IsNotNull(action);
-//            Assert.IsInstanceOfType(action, typeof(NotFoundResult));
-//        }
+            Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+            var ok = result as OkObjectResult;
+            Assert.AreEqual(updatedDetailDto, ok.Value);
+        }
 
-//        [TestMethod]
-//        public void ShouldGetAllProducts()
-//        {
-//            // Given : Des produits enregistrées
-//            IEnumerable<Product> productInDb = [
-//                new()
-//            {
-//                NameProduct = "Chaise",
-//                Description = "Une superbe chaise",
-//                NamePhoto = "Une superbe chaise bleu",
-//                UriPhoto = "https://ikea.fr/chaise.jpg"
-//            },
-//            new()
-//            {
-//                NameProduct = "Armoir",
-//                Description = "Une superbe armoire",
-//                NamePhoto = "Une superbe armoire jaune",
-//                UriPhoto = "https://ikea.fr/armoire-jaune.jpg"
-//            }
-//            ];
+        [TestMethod]
+        public async Task ShouldNotUpdateProductBecauseNotFound()
+        {
+            var updateDto = new ProductUpdateDto { NameProduct = "Unknown" };
+            _repositoryMock.Setup(r => r.GetByIdAsync(42)).ReturnsAsync((Product)null);
 
-//            _dataRepository
-//                .Setup(manager => manager.GetAllAsync())
-//                .ReturnsAsync(new ActionResult<IEnumerable<Product>>(productInDb));
+            var result = await _controller.Update(42, updateDto);
 
-//            // When : On souhaite récupérer tous les produits
-//            var products = _productController.GetAll().GetAwaiter().GetResult();
+            Assert.IsInstanceOfType(result, typeof(NotFoundResult));
+        }
 
-//            // Then : Tous les produits sont récupérés
-//            Assert.IsNotNull(products);
-//            Assert.IsInstanceOfType(products.Value, typeof(IEnumerable<Product>));
-//            Assert.IsTrue(productInDb.SequenceEqual(products.Value));
+        [TestMethod]
+        public async Task ShouldDeleteProduct()
+        {
+            var entity = new Product { IdProduct = 1, NameProduct = "Delete" };
+            _repositoryMock.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(entity);
 
-//            _dataRepository.Verify(manager => manager.GetAllAsync(), Times.Once);
-//        }
+            var result = await _controller.Delete(1);
 
-//        [TestMethod]
-//        public void GetProductShouldReturnNotFound()
-//        {
-//            //Given : Pas de produit trouvé par le manager
-//            _dataRepository
-//                .Setup(manager => manager.GetByIdAsync(30))
-//                .ReturnsAsync(new ActionResult<Product>((Product)null));
+            Assert.IsInstanceOfType(result, typeof(NoContentResult));
+            _repositoryMock.Verify(r => r.DeleteAsync(entity), Times.Once);
+        }
 
-//            // When : On appelle la méthode get de mon api pour récupérer le produit
-//            ActionResult<Product> action = _productController.Get(30).GetAwaiter().GetResult();
+        [TestMethod]
+        public async Task ShouldNotDeleteProductBecauseNotFound()
+        {
+            _repositoryMock.Setup(r => r.GetByIdAsync(42)).ReturnsAsync((Product)null);
 
-//            // Then : On ne renvoie rien et on renvoie NOT_FOUND (404)
-//            Assert.IsInstanceOfType(action.Result, typeof(NotFoundResult), "Ne renvoie pas 404");
-//            Assert.IsNull(action.Value, "Le produit n'est pas null");
+            var result = await _controller.Delete(42);
 
-//            _dataRepository.Verify(manager => manager.GetByIdAsync(30), Times.Once);
-//        }
-
-//        [TestMethod]
-//        public void ShouldCreateProduct()
-//        {
-//            // Given : Un produit a enregistré
-//            Product productToInsert = new()
-//            {
-//                IdProduct = 30,
-//                NameProduct = "Chaise",
-//                Description = "Une superbe chaise",
-//                NamePhoto = "Une superbe chaise bleu",
-//                UriPhoto = "https://ikea.fr/chaise.jpg"
-//            };
-
-//            _dataRepository
-//                .Setup(manager => manager.AddAsync(productToInsert));
-
-//            // When : On appel la méthode POST de l'API pour enregistrer le produit
-//            ActionResult<Product> action = _productController.Create(productToInsert).GetAwaiter().GetResult();
-
-//            // Then : Le produit est bien enregistré et le code renvoyé et CREATED (201)
-//            Assert.IsNotNull(action);
-//            Assert.IsInstanceOfType(action.Result, typeof(CreatedAtActionResult));
-
-//            _dataRepository.Verify(manager => manager.AddAsync(productToInsert), Times.Once);
-//        }
-
-//        [TestMethod]
-//        public void ShouldUpdateProduct()
-//        {
-//            // Given : Un produit à mettre à jour
-//            Product produitToEdit = new()
-//            {
-//                IdProduct = 20,
-//                NameProduct = "Bureau",
-//                Description = "Un super bureau",
-//                NamePhoto = "Un super bureau bleu",
-//                UriPhoto = "https://ikea.fr/bureau.jpg"
-//            };
-
-//            // Une fois enregistré, on modifie certaines propriétés 
-//            Product updatedProduit = new()
-//            {
-//                IdProduct = 20,
-//                NameProduct = "Lit",
-//                Description = "Un super lit",
-//                NamePhoto = "Un super bureau bleu",
-//                UriPhoto = "https://ikea.fr/bureau.jpg"
-//            };
-
-//            _dataRepository
-//                .Setup(manager => manager.GetByIdAsync(produitToEdit.IdProduct))
-//                .ReturnsAsync(produitToEdit);
-
-//            _dataRepository
-//                .Setup(manager => manager.UpdateAsync(produitToEdit, updatedProduit));
-
-//            // When : On appelle la méthode PUT du controller pour mettre à jour le produit
-//            IActionResult action = _productController.Update(produitToEdit.IdProduct, produitToEdit).GetAwaiter().GetResult();
-
-//            // Then : On vérifie que le produit a bien été modifié et que le code renvoyé et NO_CONTENT (204)
-//            Assert.IsNotNull(action);
-//            Assert.IsInstanceOfType(action, typeof(NoContentResult));
-
-//            _dataRepository.Verify(manager => manager.GetByIdAsync(produitToEdit.IdProduct), Times.Once);
-//            _dataRepository.Verify(manager => manager.UpdateAsync(produitToEdit, It.IsAny<Product>()), Times.Once);
-//        }
-
-//        [TestMethod]
-//        public void ShouldNotUpdateProductBecauseIdInUrlIsDifferent()
-//        {
-//            // Given : Un produit à mettre à jour
-//            Product produitToEdit = new()
-//            {
-//                IdProduct = 20,
-//                NameProduct = "Bureau",
-//                Description = "Un super bureau",
-//                NamePhoto = "Un super bureau bleu",
-//                UriPhoto = "https://ikea.fr/bureau.jpg"
-//            };
-
-
-//            // When : On appelle la méthode PUT du controller pour mettre à jour le produit,
-//            // mais en précisant un ID différent de celui du produit enregistré
-//            IActionResult action = _productController.Update(1, produitToEdit).GetAwaiter().GetResult();
-
-//            // Then : On vérifie que l'API renvoie un code BAD_REQUEST (400)
-//            Assert.IsNotNull(action);
-//            Assert.IsInstanceOfType(action, typeof(BadRequestResult));
-
-//            _dataRepository.Verify(manager => manager.GetByIdAsync(produitToEdit.IdProduct), Times.Never);
-//            _dataRepository.Verify(manager => manager.UpdateAsync(produitToEdit, It.IsAny<Product>()), Times.Never);
-//        }
-
-//        [TestMethod]
-//        public void ShouldNotUpdateProductBecauseProductDoesNotExist()
-//        {
-//            // Given : Un produit à mettre à jour qui n'est pas enregistré
-//            Product produitToEdit = new()
-//            {
-//                IdProduct = 20,
-//                NameProduct = "Bureau",
-//                Description = "Un super bureau",
-//                NamePhoto = "Un super bureau bleu",
-//                UriPhoto = "https://ikea.fr/bureau.jpg"
-//            };
-
-//            _dataRepository
-//                .Setup(manager => manager.GetByIdAsync(produitToEdit.IdProduct))
-//                .ReturnsAsync((Product)null);
-
-//            // When : On appelle la méthode PUT du controller pour mettre à jour un produit qui n'est pas enregistré
-//            IActionResult action = _productController.Update(produitToEdit.IdProduct, produitToEdit).GetAwaiter().GetResult();
-
-//            // Then : On vérifie que l'API renvoie un code NOT_FOUND (404)
-//            Assert.IsNotNull(action);
-//            Assert.IsInstanceOfType(action, typeof(NotFoundResult));
-
-//            _dataRepository.Verify(manager => manager.GetByIdAsync(produitToEdit.IdProduct), Times.Once);
-//            _dataRepository.Verify(manager => manager.UpdateAsync(produitToEdit, It.IsAny<Product>()), Times.Never);
-
-//        }
-//    }
-//}
+            Assert.IsInstanceOfType(result, typeof(NotFoundResult));
+        }
+    }
+}

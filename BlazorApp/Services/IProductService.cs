@@ -1,5 +1,5 @@
-﻿using BlazorApp.Models;
-using BlazorApp.Models.DTO.Products;
+﻿using R5A08_TP1.Shared.DTO.Products;
+
 
 namespace BlazorApp.Services
 {

@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using R5A08_TP1.Models.DataManager;
-using R5A08_TP1.Models.DTO.Products;
+using R5A08_TP1.Shared.DTO.Products;
 using R5A08_TP1.Models.EntityFramework;
 using R5A08_TP1.Models.Repository;
 

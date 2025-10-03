@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using R5A08_TP1.Models.DTO.Commun;
-using R5A08_TP1.Models.DTO.Products;
+using R5A08_TP1.Shared.DTO.Commun;
+using R5A08_TP1.Shared.DTO.Products;
 using R5A08_TP1.Models.EntityFramework;
 
 namespace R5A08_TP1.Models.Mapping
@@ -54,8 +54,12 @@ namespace R5A08_TP1.Models.Mapping
 
 
             // ---------------- BRAND & TYPE ----------------
-            // Sais mapper de Brand vers BrandDto ET aussi de BrandDto vers Brand automatiquement
             CreateMap<Brand, BrandDto>().ReverseMap();
+            CreateMap<BrandCreateDto, Brand>();
+            CreateMap<BrandUpdateDto, Brand>();
+
+            CreateMap<TypeProductCreateDto, TypeProduct>();
+            CreateMap<TypeProductUpdateDto, TypeProduct>();
             CreateMap<TypeProduct, TypeProductDto>().ReverseMap();
         }
     }
