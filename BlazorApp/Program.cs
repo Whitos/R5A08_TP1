@@ -1,8 +1,8 @@
-using BlazorApp.Shared;
 using BlazorApp.Services;
+using BlazorApp.Shared;
+using BlazorBootstrap;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using BlazorBootstrap;
 
 namespace BlazorApp
 {
